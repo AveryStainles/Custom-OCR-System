@@ -1,0 +1,70 @@
+
+
+
+        //public void RenderImageData(string img_folder_path, string img_file_name)
+        //{
+        //    string folderDestination = img_folder_path + img_file_name;
+        //    string imageFilePath = folderDestination;
+
+        //    //for (int i = 1; i <= 50; i++)
+        //    //{
+
+        //    Bitmap image = new(imageFilePath);
+        //    //Bitmap image = new(imageFilePath + $" {i}.png");
+        //    int IMG_WIDTH = image.Width;
+        //    int IMG_HEIGHT = image.Height;
+
+
+        //    // Render image as greyscale values
+        //    // White Pixel == 1   |   Black Pixel == 0
+        //    List<double> columnsAverage = new();
+        //    List<double> rowsAverage = new();
+        //    float coloredColumnPixelCount = 0;
+        //    float coloredRowPixelCount = 0;
+        //    float pixelColor;
+        //    for (int col = 0; col < IMG_HEIGHT; col++)
+        //    {
+        //        for (int row = 0; row < IMG_WIDTH; row++)
+        //        {
+        //            // Setup Row averages
+        //            pixelColor = image.GetPixel(row, col).GetBrightness();
+
+        //            // is pixel is coloured black
+        //            if (pixelColor == 0)
+        //            {
+        //                coloredColumnPixelCount++;
+        //            }
+        //            lbl_DisplayText.Text += (pixelColor == 0) ? $"{pixelColor} " : ". ";
+
+
+        //            // Setup Column averages
+        //            pixelColor = image.GetPixel(col, row).GetBrightness();
+
+        //            // is pixel is coloured black
+        //            if (pixelColor == 0)
+        //            {
+        //                coloredRowPixelCount++;
+        //            }
+        //        }
+
+        //        // Add Averages to data arrays rounded hundredth (0.00)
+        //        rowsAverage.Add((coloredColumnPixelCount > 0) ? Math.Floor((coloredColumnPixelCount / 3) * 100) / 100 : 0);
+        //        columnsAverage.Add((coloredRowPixelCount > 0) ? Math.Floor((coloredRowPixelCount / 3) * 100) / 100 : 0);
+
+        //        coloredColumnPixelCount = 0;
+        //        coloredRowPixelCount = 0;
+        //        lbl_DisplayText.Text += "\n";
+
+        //        // Testing reading and writing from a file
+        //        string filePath = "C:\\Users\\fox-r\\source\\repos\\AverySecretProject\\Data\\";
+        //        helperClass.WriteToFile(filePath + $"in_rows_0.csv", String.Join(",", rowsAverage));
+
+
+        //        //// Displays the averages for each rows and columns
+        //        //lblRowData.Text = "Rows" + String.Join("\n", helperClass.ReadFromFile(filePath + "rows.csv").Split(','));
+
+
+        //        helperClass.WriteToFile(filePath + $"in_columns_0.csv", String.Join(",", columnsAverage));
+        //        //lblColumnData.Text = "Columns" + String.Join("\n", helperClass.ReadFromFile(filePath + "columns.csv").Split(','));
+        //    }
+        //}
