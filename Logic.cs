@@ -102,43 +102,39 @@
             List<double> rowsAverage = new();
             for (int col = 0; col < IMG_HEIGHT; col++)
             {
-                // Render image as greyscale values
-                // White Pixel == 1   |   Black Pixel == 0
                 double coloredColumnPixelCount = 0;
                 double coloredRowPixelCount = 0;
-                double pixelColor;
                 for (int row = 0; row < IMG_WIDTH; row++)
                 {
-                    // Setup Row averages
-                    pixelColor = image.GetPixel(row, col).GetBrightness();
-                    coloredColumnPixelCount += pixelColor;
-                    // Setup Column averages
-                    pixelColor = image.GetPixel(col, row).GetBrightness();
-                    coloredRowPixelCount += pixelColor;
+                    // Setup Row sums
+                    coloredColumnPixelCount += image.GetPixel(row, col).GetBrightness(); ;
+                    // Setup Column sums
+                    coloredRowPixelCount += image.GetPixel(col, row).GetBrightness(); ;
                 }
 
-                // Add Averages to data arrays rounded hundredth (0.00)
+                // Add Averages to data lists
                 rowsAverage.Add(coloredColumnPixelCount / IMG_WIDTH);
                 columnsAverage.Add(coloredRowPixelCount / IMG_HEIGHT);
             }
 
             // setup data to have the highest pixel dansity in the bottom right corner
-            Algorithm algorithm = new();
-            List<double> temp_var = rowsAverage;
-            while (rowsAverage[rowsAverage.Count - 1] < rowsAverage[rowsAverage.Count - 2])
-            {
-                algorithm.CycleValues(temp_var);
-            }
-            rowsAverage = temp_var;
-
-            temp_var = columnsAverage;
-            while (columnsAverage[columnsAverage.Count - 1] < columnsAverage[columnsAverage.Count - 2])
-            {
-                algorithm.CycleValues(columnsAverage);
-            }
-            columnsAverage = temp_var;
-
+            rowsAverage = LineUpData(rowsAverage);
+            columnsAverage = LineUpData(columnsAverage);
             return (rowsAverage, columnsAverage);
+        }
+
+        public List<double> LineUpData(List<double> data)
+        {
+            // setup data to have the highest pixel dansity in the bottom right corner
+            Algorithm algorithm = new();
+            List<double> temp_data = data;
+            while (data[data.Count - 1] < data[data.Count - 2])
+            {
+                algorithm.CycleValues(temp_data);
+            }
+            data = temp_data;
+
+            return data;
         }
 
 
