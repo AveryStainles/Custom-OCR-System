@@ -74,6 +74,7 @@
                         sum_of_column_averages[index] += row_column_averages.Item1[index];
                     }
                 }
+                //
 
                 // Sets the overall average of the training timage's data
                 for (int index = 0; index < sum_of_row_averages.Count; index++)
