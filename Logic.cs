@@ -98,33 +98,28 @@
             Bitmap image = new Bitmap(imageFilePath + "");
             int IMG_WIDTH = image.Width;
             int IMG_HEIGHT = image.Height;
-
-            // Render image as greyscale values
-            // White Pixel == 1   |   Black Pixel == 0
             List<double> columnsAverage = new();
             List<double> rowsAverage = new();
-            float coloredColumnPixelCount = 0;
-            float coloredRowPixelCount = 0;
-            float pixelColor;
             for (int col = 0; col < IMG_HEIGHT; col++)
             {
+                // Render image as greyscale values
+                // White Pixel == 1   |   Black Pixel == 0
+                double coloredColumnPixelCount = 0;
+                double coloredRowPixelCount = 0;
+                double pixelColor;
                 for (int row = 0; row < IMG_WIDTH; row++)
                 {
                     // Setup Row averages
                     pixelColor = image.GetPixel(row, col).GetBrightness();
-                    if (pixelColor == 0) { coloredColumnPixelCount++; }
-
+                    coloredColumnPixelCount += pixelColor;
                     // Setup Column averages
                     pixelColor = image.GetPixel(col, row).GetBrightness();
-                    if (pixelColor == 0) { coloredRowPixelCount++; }
+                    coloredRowPixelCount += pixelColor;
                 }
 
                 // Add Averages to data arrays rounded hundredth (0.00)
-                rowsAverage.Add((coloredColumnPixelCount > 0) ? Math.Round(coloredColumnPixelCount / 3, 3) : 0);
-                columnsAverage.Add((coloredRowPixelCount > 0) ? Math.Round(coloredRowPixelCount / 3, 3) : 0);
-
-                coloredColumnPixelCount = 0;
-                coloredRowPixelCount = 0;
+                rowsAverage.Add(coloredColumnPixelCount / IMG_WIDTH);
+                columnsAverage.Add(coloredRowPixelCount / IMG_HEIGHT);
             }
 
             // setup data to have the highest pixel dansity in the bottom right corner
