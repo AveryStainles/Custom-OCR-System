@@ -40,13 +40,14 @@
 
         public void GenerateTrainingDataFromTrainingImages(string data_path)
         {
+            Algorithm algorithm = new();
             for (int folder_num = 0; folder_num <= 9; folder_num++)
             {
                 List<double>? sum_of_column_averages = new();
                 List<double>? sum_of_row_averages = new();
                 string folder_path = data_path + folder_num;
-                int total_img_count = 50;
-                for (int image_file_count = 0; image_file_count <= total_img_count-1; image_file_count++)
+                int total_img_count = 50;       // TODO: GENERICALLY GET HOW MANY PNGs ARE IN THE FOLDER
+                for (int image_file_count = 0; image_file_count <= total_img_count - 1; image_file_count++)
                 {
                     //setup paths
                     string image_path = $"{folder_path}\\Training_Images\\Hand_Drawn_ ({image_file_count}).png";
@@ -55,7 +56,7 @@
                     //setup data           row_column_averages = (Item1 = List<double> rows, Item2 = List<double> columns)
                     var row_column_averages = GetImageData(image_path);
 
-                    // if this is first loop, set lists equal to image data. Otherwise itll append the doubles later.
+                    // if this is first loop, set lists equal to image data. Otherwise itll add the elements to its respective indecies.
                     if (sum_of_row_averages.Count == 0 && sum_of_column_averages.Count == 0)
                     {
                         sum_of_row_averages = row_column_averages.Item1;
@@ -66,21 +67,18 @@
                     helper.WriteToFile($"{save_location_path}row_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item1));
                     helper.WriteToFile($"{save_location_path}column_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item2));
 
-     // TODO CYCLE THE LISTS SO THE TRAINING DATA IS LINED UP WITH ITSELF BEFORE TO THE SUM LISTS
                     // add row and column values to respective lists
                     for (int index = 0; index < row_column_averages.Item1.Count; index++)
-                    { 
+                    {
                         sum_of_row_averages[index] += row_column_averages.Item1[index];
-                        sum_of_column_averages[index] += row_column_averages.Item1[index];
+                        sum_of_column_averages[index] += row_column_averages.Item2[index];
                     }
                 }
-                //
-
                 // Sets the overall average of the training timage's data
                 for (int index = 0; index < sum_of_row_averages.Count; index++)
                 {
-                    sum_of_row_averages[index] = Math.Round(sum_of_row_averages[index]/total_img_count, 5);
-                    sum_of_column_averages[index] = Math.Round(sum_of_column_averages[index]/total_img_count, 5);
+                    sum_of_row_averages[index] = Math.Round(sum_of_row_averages[index] / total_img_count, 5);
+                    sum_of_column_averages[index] = Math.Round(sum_of_column_averages[index] / total_img_count, 5);
                 }
 
                 helper.WriteToFile($"{folder_path}\\Averages\\row.csv", String.Join(",", sum_of_row_averages));
@@ -100,36 +98,43 @@
             Bitmap image = new Bitmap(imageFilePath + "");
             int IMG_WIDTH = image.Width;
             int IMG_HEIGHT = image.Height;
-
-            // Render image as greyscale values
-            // White Pixel == 1   |   Black Pixel == 0
             List<double> columnsAverage = new();
             List<double> rowsAverage = new();
-            float coloredColumnPixelCount = 0;
-            float coloredRowPixelCount = 0;
-            float pixelColor;
             for (int col = 0; col < IMG_HEIGHT; col++)
             {
+                double coloredColumnPixelCount = 0;
+                double coloredRowPixelCount = 0;
                 for (int row = 0; row < IMG_WIDTH; row++)
                 {
-                    // Setup Row averages
-                    pixelColor = image.GetPixel(row, col).GetBrightness();
-                    if (pixelColor == 0) { coloredColumnPixelCount++; }
-
-                    // Setup Column averages
-                    pixelColor = image.GetPixel(col, row).GetBrightness();
-                    if (pixelColor == 0) { coloredRowPixelCount++; }
+                    // Setup Row sums
+                    coloredColumnPixelCount += image.GetPixel(row, col).GetBrightness(); ;
+                    // Setup Column sums
+                    coloredRowPixelCount += image.GetPixel(col, row).GetBrightness(); ;
                 }
 
-                // Add Averages to data arrays rounded hundredth (0.00)
-                rowsAverage.Add((coloredColumnPixelCount > 0) ? Math.Floor((coloredColumnPixelCount / 3) * 100) / 100 : 0);
-                columnsAverage.Add((coloredRowPixelCount > 0) ? Math.Floor((coloredRowPixelCount / 3) * 100) / 100 : 0);
-
-                coloredColumnPixelCount = 0;
-                coloredRowPixelCount = 0;
+                // Add Averages to data lists
+                rowsAverage.Add(coloredColumnPixelCount / IMG_WIDTH);
+                columnsAverage.Add(coloredRowPixelCount / IMG_HEIGHT);
             }
 
+            // setup data to have the highest pixel dansity in the bottom right corner
+            rowsAverage = LineUpData(rowsAverage);
+            columnsAverage = LineUpData(columnsAverage);
             return (rowsAverage, columnsAverage);
+        }
+
+        public List<double> LineUpData(List<double> data)
+        {
+            // setup data to have the highest pixel dansity in the bottom right corner
+            Algorithm algorithm = new();
+            List<double> temp_data = data;
+            while (data[data.Count - 1] < data[data.Count - 2])
+            {
+                algorithm.CycleValues(temp_data);
+            }
+            data = temp_data;
+
+            return data;
         }
 
 
@@ -175,14 +180,8 @@
             /// Puts the last element of the array to the front of it. This lines up the png to the bottom right. Caution, this modifies the original array.
             /// </summary>
             /// <param name="list"></param>
-            private void CycleValues(List<double> list)
+            public void CycleValues(List<double> list)
             {
-                //AVERY TEST
-                if (list[list.Count - 1] != 0)
-                {
-                    return;
-                }
-
                 var last_element = list[list.Count - 1];
                 list.RemoveAt(list.Count - 1);
                 list.Insert(0, last_element);
@@ -201,14 +200,9 @@
                 {
                     double img_difference_rate = GetComparedImagesRate(t_data, in_data);
                     all_img_difference_rate.Add(img_difference_rate);
-                    CycleValues(in_data);
-
                     if (img_difference_rate < differenceRate) { differenceRate = img_difference_rate; }
                 }
-
-
                 return differenceRate;
-                //return all_img_difference_rate;
             }
 
             private double GetComparedImagesRate(List<double> t_data, List<double> in_data)
@@ -219,12 +213,8 @@
                 // If the difference is negative, it is turned positive to avoid skewing data
                 for (int index = 0; index < t_data.Count; index++)
                 {
-
-                    //AVERY TEST
-                    if (in_data[index] == 0) { continue; }
                     var hold_value = t_data[index] - in_data[index];
                     differenceRate += (hold_value < 0 ? hold_value * -1 : hold_value);
-
                 }
 
                 var average_difference_rate = differenceRate / t_data.Count;

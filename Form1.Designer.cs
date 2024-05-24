@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             lbl_DisplayText = new Label();
-            lblColumnData = new Label();
             lblRowData = new Label();
             SuspendLayout();
             // 
@@ -37,30 +36,20 @@
             // 
             lbl_DisplayText.AutoSize = true;
             lbl_DisplayText.Font = new Font("Courier New", 18F, FontStyle.Bold, GraphicsUnit.Point);
-            lbl_DisplayText.Location = new Point(357, 39);
+            lbl_DisplayText.Location = new Point(240, 9);
             lbl_DisplayText.Name = "lbl_DisplayText";
             lbl_DisplayText.Size = new Size(0, 27);
             lbl_DisplayText.TabIndex = 0;
             // 
-            // lblColumnData
-            // 
-            lblColumnData.AutoSize = true;
-            lblColumnData.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblColumnData.Location = new Point(710, 23);
-            lblColumnData.Name = "lblColumnData";
-            lblColumnData.Size = new Size(58, 19);
-            lblColumnData.TabIndex = 1;
-            lblColumnData.Text = "Column\r\n";
-            // 
             // lblRowData
             // 
             lblRowData.AutoSize = true;
-            lblRowData.Font = new Font("Calibri", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblRowData.Location = new Point(634, 23);
+            lblRowData.Font = new Font("Calibri", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            lblRowData.Location = new Point(494, 9);
             lblRowData.Name = "lblRowData";
-            lblRowData.Size = new Size(37, 19);
+            lblRowData.Size = new Size(71, 29);
             lblRowData.TabIndex = 2;
-            lblRowData.Text = "Row\r\n";
+            lblRowData.Text = "Data: \r\n";
             // 
             // Form1
             // 
@@ -68,7 +57,6 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
             Controls.Add(lblRowData);
-            Controls.Add(lblColumnData);
             Controls.Add(lbl_DisplayText);
             Name = "Form1";
             Text = "Form1";
@@ -79,7 +67,6 @@
         #endregion
 
         public Label lbl_DisplayText;
-        private Label lblColumnData;
         private Label lblRowData;
     }
 }
