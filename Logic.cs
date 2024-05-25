@@ -157,6 +157,20 @@
 
             return image_ui_render;
         }
+        
+        public string RenderImageFromData(List<double> row_data, List<double> column_data, double heat_sensitivity_rate = 1.3)
+        {
+            string display_data = "";
+            for (int row = 0; row < row_data.Count; row++)
+            {
+                for (int column = 0; column <  column_data.Count; column++)
+                {
+                    display_data += ((column_data[column] + row_data[row]) > heat_sensitivity_rate) ? ". " : "0 ";
+                }
+                display_data += "\n";
+            }
+            return display_data;
+        }
 
         public class Algorithm
         {
@@ -170,9 +184,9 @@
             public double CompareInputDataToTrainingData(string training_data_path, string input_data_path)
             {
                 // Compare Difference Rate
-                List<double> training_data_list = helperClass.ReadFromFile(training_data_path).Split(',').Select(num => Convert.ToDouble(num)).ToList();
-                List<double> user_data_list = helperClass.ReadFromFile(input_data_path).Split(',').Select(num => Convert.ToDouble(num)).ToList();
-                double rate = GetDifferenceRates(training_data_list, user_data_list);
+                List<double> training_data = helperClass.GetListFromDataPath(training_data_path);
+                List<double> user_data = helperClass.GetListFromDataPath(input_data_path);
+                double rate = GetDifferenceRates(training_data, user_data);
                 return rate;
             }
 

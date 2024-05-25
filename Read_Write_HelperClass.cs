@@ -47,5 +47,10 @@ namespace AverySecretProject
                 return;
             }
         }
+
+        public List<double> GetListFromDataPath(string data_path)
+        {
+            return ReadFromFile(data_path).Split(",").Select(val => double.Parse(val)).ToList();
+        }
     }
 }
