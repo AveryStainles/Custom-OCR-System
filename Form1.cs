@@ -20,7 +20,7 @@ namespace AverySecretProject
             //Demo_RenderImageFromTestData(training_data_path);
             //Demo_EvaluateInput(input_image_file_path, data_file_path);
             //ResetTrainingData(data_file_path);
-            //RunTestData(data_file_path);
+            //RunAccuracyTest(data_file_path);
         }
 
 
@@ -77,7 +77,7 @@ namespace AverySecretProject
         /// </summary>
         /// <param name="data_file_path">Path to the Data folder of the project as a string</param>
         /// <returns></returns>
-        public void RunTestData(string data_file_path)
+        public void RunAccuracyTest(string data_file_path)
         {
             string result = "";
             int total_score = 0;
