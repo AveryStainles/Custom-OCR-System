@@ -4,40 +4,6 @@
     {
         private Read_Write_HelperClass helper = new();
 
-        public void SetImageData(string current_num_folder_path, int total_num_photo_to_convert, string save_destination_file_path)
-        {
-            List<double> current_image_column_agerages;
-            List<double> current_image_row_agerages;
-            for (int img_count = 1; img_count <= total_num_photo_to_convert; img_count++)
-            {
-                string current_folder_num = current_num_folder_path[current_num_folder_path.Length - 1] + "";
-                var hold_val = GetImageData(current_num_folder_path + "\\" + "Hand_Drawn_" + current_folder_num + " " + img_count + ".png");
-                current_image_column_agerages = hold_val.Item1;
-                current_image_row_agerages = hold_val.Item2;
-
-                helper.WriteToFile($"{save_destination_file_path}\\columns_data_{img_count}.csv", String.Join(",", current_image_column_agerages));
-                helper.WriteToFile($"{save_destination_file_path}\\rows_data_{img_count}.csv", String.Join(",", current_image_row_agerages));
-            }
-        }
-
-
-        public void LoadAverageColumnRowDataToNewCSV(string filePath, string file_name, string save_destination, int data_for_num)
-        {
-            List<double> default_list = helper.ReadFromFile($"{filePath}{file_name}1.csv").Split(',').Select(num => Convert.ToDouble(num)).ToList();
-            List<double>? current_list = null;
-            for (int i = 1; i <= 50; i++)
-            {
-                current_list = helper.ReadFromFile($"{filePath}{file_name}{i}.csv").Split(',').Select(num => Convert.ToDouble(num)).ToList();
-                for (int list_index = 0; list_index < default_list.Count; list_index++)
-                {
-                    default_list[list_index] = Math.Round((default_list[list_index] + current_list[list_index]) / 2, 3);
-                }
-            }
-
-            helper.WriteToFile(save_destination + $"{data_for_num}.csv", String.Join(",", default_list));
-        }
-
-
         public void GenerateTrainingDataFromTrainingImages(string data_path)
         {
             Algorithm algorithm = new();
@@ -46,15 +12,19 @@
                 List<double>? sum_of_column_averages = new();
                 List<double>? sum_of_row_averages = new();
                 string folder_path = data_path + folder_num;
-                int total_img_count = 50;       // TODO: GENERICALLY GET HOW MANY PNGs ARE IN THE FOLDER
-                for (int image_file_count = 0; image_file_count <= total_img_count - 1; image_file_count++)
+                int total_img_count = Directory.GetFiles($"{folder_path}\\Training_Images").Count();
+                for (int image_file_count = 0; image_file_count < total_img_count; image_file_count++)
                 {
                     //setup paths
                     string image_path = $"{folder_path}\\Training_Images\\Hand_Drawn_ ({image_file_count}).png";
                     string save_location_path = $"{folder_path}\\Training_Data\\";
 
-                    //setup data           row_column_averages = (Item1 = List<double> rows, Item2 = List<double> columns)
-                    var row_column_averages = GetImageData(image_path);
+                    //setup data
+                    //Item1 = List<double> rows, Item2 = List<double> columns
+                    (List<double>, List<double>) row_column_averages = GetImageData(image_path);
+
+                    helper.WriteToFile($"{save_location_path}row_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item1));
+                    helper.WriteToFile($"{save_location_path}column_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item2));
 
                     // if this is first loop, set lists equal to image data. Otherwise itll add the elements to its respective indecies.
                     if (sum_of_row_averages.Count == 0 && sum_of_column_averages.Count == 0)
@@ -63,9 +33,6 @@
                         sum_of_column_averages = row_column_averages.Item2;
                         continue;
                     }
-
-                    helper.WriteToFile($"{save_location_path}row_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item1));
-                    helper.WriteToFile($"{save_location_path}column_averages{image_file_count}.csv", String.Join(",", row_column_averages.Item2));
 
                     // add row and column values to respective lists
                     for (int index = 0; index < row_column_averages.Item1.Count; index++)
@@ -157,13 +124,13 @@
 
             return image_ui_render;
         }
-        
+
         public string RenderImageFromData(List<double> row_data, List<double> column_data, double heat_sensitivity_rate = 1.3)
         {
             string display_data = "";
             for (int row = 0; row < row_data.Count; row++)
             {
-                for (int column = 0; column <  column_data.Count; column++)
+                for (int column = 0; column < column_data.Count; column++)
                 {
                     display_data += ((column_data[column] + row_data[row]) > heat_sensitivity_rate) ? ". " : "0 ";
                 }
