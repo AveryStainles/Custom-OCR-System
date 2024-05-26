@@ -4,13 +4,13 @@ using System.Security.Permissions;
 namespace AverySecretProject
 {
     public partial class Form1 : Form
-    {
+    { 
 
         private Read_Write_HelperClass helperClass = new();
         private Logic logic = new();
         private Logic.Algorithm algorithm = new();
         // Setup Paths
-        public static string data_file_path { get; set; } = "C:\\Users\\fox-r\\source\\repos\\AverySecretProject\\Data\\";
+        public static string data_file_path { get; set; } = "C:\\Users\\fox-r\\source\\repos\\AveryStainles\\Custom-OCR-System\\Data\\";
         public string input_image_file_path { get; set; } = data_file_path + "ImageInput.png";
         public string training_data_path { get; set; } = data_file_path + "0\\Averages\\";
 
