@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace AverySecretProject
 {
@@ -21,29 +22,7 @@ namespace AverySecretProject
         public Form1()
         {
             InitializeComponent();
-
-            // Colour UI components
-            BackColor = primary_colour;
-            lbl_DisplayText.BackColor = accent_colour;
-            lblData.BackColor = accent_colour;
-            lbl_Info.BackColor = accent_colour;
-
-            lbl_DisplayText.ForeColor = accent_colour2;
-            lblData.ForeColor = accent_colour2;
-            lbl_Info.ForeColor = accent_colour2;
-
-            menu_option.BackColor = accent_colour;
-            btn_accuracy_test.BackColor = accent_colour2;
-            btn_analyze_input_data.BackColor = accent_colour2;
-            btn_render_image_from_data.BackColor = accent_colour2;
-            btn_reset_data.BackColor = accent_colour2;
-
-            optionToolStripMenuItem.ForeColor = text_colour;
-            btn_accuracy_test.ForeColor = primary_colour;
-            btn_analyze_input_data.ForeColor = primary_colour;
-            btn_render_image_from_data.ForeColor = primary_colour;
-            btn_reset_data.ForeColor = primary_colour;
-
+            SetupUiStyling();
         }
 
         public void RenderInputImage(string img_file_path) { lbl_DisplayText.Text = logic.RenderImage(img_file_path); }
@@ -154,8 +133,40 @@ namespace AverySecretProject
             return lowest_difference_rate;
         }
 
+        public void SetupUiStyling()
+        {
+            // Colour UI components
+            BackColor = primary_colour;
+            lbl_DisplayText.BackColor = accent_colour;
+            lblData.BackColor = accent_colour;
+            lbl_Info.BackColor = accent_colour;
+
+            lbl_DisplayText.ForeColor = accent_colour2;
+            lblData.ForeColor = accent_colour2;
+            lbl_Info.ForeColor = accent_colour2;
+
+            menu_option.BackColor = accent_colour;
+            btn_accuracy_test.BackColor = accent_colour2;
+            btn_analyze_input_data.BackColor = accent_colour2;
+            btn_render_image_from_data.BackColor = accent_colour2;
+            btn_reset_data.BackColor = accent_colour2;
+
+            optionToolStripMenuItem.ForeColor = text_colour;
+            btn_accuracy_test.ForeColor = primary_colour;
+            btn_analyze_input_data.ForeColor = primary_colour;
+            btn_render_image_from_data.ForeColor = primary_colour;
+            btn_reset_data.ForeColor = primary_colour;
+
+            lbl_DisplayText.Visible = false;
+            lblData.Visible = false;
+            lbl_Info.Visible = false;
+        }
+
         private void SetupInfoLabel(string message)
         {
+            lbl_DisplayText.Visible = true;
+            lblData.Visible = true;
+            lbl_Info.Visible = true;
             lbl_Info.MaximumSize = new Size(lbl_DisplayText.Size.Width, lbl_DisplayText.Height / 3);
             lbl_Info.Top = lbl_DisplayText.Size.Height + 20;
             lbl_Info.Text = message;
@@ -181,7 +192,8 @@ namespace AverySecretProject
             lbl_DisplayText.Text = "Training Data Has Successfully Backed Up Using Training_Images";
 
             // TODO: turn this into a pop up
-            SetupInfoLabel("CAUTION!\nResets all the Training_Data using the images in Training_Data_Images");
+
+            SetupInfoLabel("Success!");
             lblData.Text = "";
         }
 
