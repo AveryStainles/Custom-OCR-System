@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
-namespace AverySecretProject
+namespace Custom_Optical_Character_Recognition_System
 {
     internal class Read_Write_HelperClass
     {
@@ -10,10 +12,9 @@ namespace AverySecretProject
         {
             string allData = "";
             string hasMoreData;
-            StreamReader? reader = null;
             try
             {
-                reader = new StreamReader(filePath);
+                StreamReader reader = new StreamReader(filePath);
                 hasMoreData = reader.ReadLine();
 
                 while (hasMoreData != null)
@@ -33,11 +34,9 @@ namespace AverySecretProject
 
         public void WriteToFile(string filePath, string data)
         {
-
-            StreamWriter? writer = null;
             try
             {
-                writer = new StreamWriter(filePath);
+                StreamWriter writer = new StreamWriter(filePath);
                 writer.WriteLine(data);
                 writer.Close();
             }
@@ -50,7 +49,7 @@ namespace AverySecretProject
 
         public List<double> GetListFromDataPath(string data_path)
         {
-            return ReadFromFile(data_path).Split(",").Select(val => double.Parse(val)).ToList();
+            return ReadFromFile(data_path).Split(',').Select(val => double.Parse(val)).ToList();
         }
     }
 }

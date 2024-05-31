@@ -1,16 +1,22 @@
-﻿namespace AverySecretProject
+﻿using System.Collections.Generic;
+using System;
+using System.IO;
+using System.Linq;
+using System.Drawing;
+
+namespace Custom_Optical_Character_Recognition_System
 {
     internal class Logic
     {
-        private Read_Write_HelperClass helper = new();
+        private Read_Write_HelperClass helper = new Read_Write_HelperClass();
 
         public void GenerateTrainingDataFromTrainingImages(string data_path)
         {
-            Algorithm algorithm = new();
+            Algorithm algorithm = new Algorithm();
             for (int folder_num = 0; folder_num <= 9; folder_num++)
             {
-                List<double>? sum_of_column_averages = new();
-                List<double>? sum_of_row_averages = new();
+                List<double> sum_of_column_averages = new List<double>();
+                List<double> sum_of_row_averages = new List<double>();
                 string folder_path = data_path + folder_num;
                 int total_img_count = Directory.GetFiles($"{folder_path}\\Training_Images").Count();
                 for (int image_file_count = 0; image_file_count < total_img_count; image_file_count++)
@@ -65,8 +71,8 @@
             Bitmap image = new Bitmap(imageFilePath + "");
             int IMG_WIDTH = image.Width;
             int IMG_HEIGHT = image.Height;
-            List<double> columnsAverage = new();
-            List<double> rowsAverage = new();
+            List<double> columnsAverage = new List<double>();
+            List<double> rowsAverage = new List<double>();
             for (int col = 0; col < IMG_HEIGHT; col++)
             {
                 double coloredColumnPixelCount = 0;
@@ -93,7 +99,7 @@
         public List<double> LineUpData(List<double> data)
         {
             // setup data to have the highest pixel dansity in the bottom right corner
-            Algorithm algorithm = new();
+            Algorithm algorithm = new Algorithm();
             List<double> temp_data = data;
             while (data[data.Count - 1] < data[data.Count - 2])
             {
@@ -107,7 +113,7 @@
 
         public string RenderImage(string imageFilePath)
         {
-            Bitmap image = new(imageFilePath);
+            Bitmap image = new Bitmap(imageFilePath);
             int IMG_WIDTH = image.Width;
             int IMG_HEIGHT = image.Height;
             string image_ui_render = "";
@@ -141,7 +147,7 @@
 
         public class Algorithm
         {
-            private Read_Write_HelperClass helperClass = new();
+            private Read_Write_HelperClass helperClass = new Read_Write_HelperClass();
 
             public Algorithm() { }
 
@@ -175,7 +181,7 @@
             private double GetDifferenceRates(List<double> t_data, List<double> in_data)
             {
                 double differenceRate = 100; // 100% different
-                List<double> all_img_difference_rate = new();
+                List<double> all_img_difference_rate = new List<double>();
 
                 for (int cycle_index = 0; cycle_index < in_data.Count; cycle_index++)
                 {
