@@ -2,9 +2,12 @@
 using System;
 using System.Drawing;
 using System.Windows;
-using Color = System.Drawing.Color;
 using System.Windows.Media;
 using System.Linq;
+using System.Windows.Shapes;
+using System.Windows.Controls;
+using Brushes = System.Windows.Media.Brushes;
+using System.Windows.Input;
 
 namespace Custom_Optical_Character_Recognition_System
 {
@@ -28,6 +31,7 @@ namespace Custom_Optical_Character_Recognition_System
         public SolidColorBrush text_colour { get; set; }
         public SolidColorBrush accent_colour { get; set; }
         public SolidColorBrush accent_colour2 { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,7 +40,7 @@ namespace Custom_Optical_Character_Recognition_System
 
         }
 
-        public void SetupColours()
+        private void SetupColours()
         {
             BrushConverter converter = new BrushConverter();
             secondary_colour = (SolidColorBrush)converter.ConvertFromString("#170013");
@@ -47,14 +51,106 @@ namespace Custom_Optical_Character_Recognition_System
 
         }
 
-        public void RenderInputImage(string img_file_path) { lbl_DisplayText.Content = logic.RenderImage(img_file_path); }
+        private void RenderInputImage(string img_file_path) { lbl_DisplayText.Content = logic.RenderImage(img_file_path); }
 
-        public void SaveInputData(string save_location_path, string data) { helperClass.WriteToFile(save_location_path, data); }
+        private void SaveInputData(string save_location_path, string data) { helperClass.WriteToFile(save_location_path, data); }
+
+
+        /// <summary>
+        /// returns a tuple with the data corresponding to the difference rate and the value the algorithm recognized.
+        /// <para>Item 1: (double) Difference Rate</para>
+        /// <para>Item 2: (int) Value the algorithm recognized</para>
+        /// </summary>
+        /// <param name="data_file_path"> Path to the Data folder of the project as a string</param>
+        /// <returns></returns>
+        private (double, int) GetInputValFromAlgorithm(string data_file_path)
+        {
+            double column_rate;
+            double row_rate;
+            // Set Item1 to be 100% different  |   Set Item2 at the current likeliest value
+            (double, int) lowest_difference_rate = (100, -1);
+            for (int folder_num = 0; folder_num <= 9; folder_num++)
+            {
+                column_rate = algorithm.CompareInputDataToTrainingData(data_file_path + $"{folder_num}\\Averages\\column.csv", data_file_path + "input_columns.csv");
+                row_rate = algorithm.CompareInputDataToTrainingData(data_file_path + $"{folder_num}\\Averages\\row.csv", data_file_path + "input_rows.csv");
+
+                if ((column_rate + row_rate) / 2 < lowest_difference_rate.Item1)
+                {
+                    lowest_difference_rate.Item1 = (column_rate + row_rate) / 2;
+                    lowest_difference_rate.Item2 = folder_num;
+                }
+            }
+
+            return lowest_difference_rate;
+        }
+
+        private void SetupUiStyling()
+        {
+            // Colour UI components
+            lbl_DisplayText.Foreground = accent_colour2;
+            lblData.Foreground = accent_colour2;
+            lbl_Info.Foreground = accent_colour2;
+
+
+            // TODO: Make Canvas Expandable
+            grid_display_layer.MinHeight = 450;
+            grid_display_layer.MinWidth = 450;
+            writting_canvas.MaxHeight = 1000;
+            writting_canvas.MaxWidth = 1000;
+        }
+
+        private void SetupInfoLabel(string message)
+        {
+            lbl_Info.Text = message;
+        }
+
+        // Clears all the content for visual components
+        private void ClearUI()
+        {
+            lblData.Content = "";
+            lbl_DisplayText.Content = "";
+            lbl_Info.Text = "";
+
+            writting_canvas.IsEnabled = false;
+            writting_canvas.Visibility = Visibility.Hidden;
+        }
+
+        private void ClearCanvas() { writting_canvas.Children.Clear(); }
+
+        /// <summary>
+        /// Draws a circle using the Ellipse Method. Drawn on canvas at mouse coodinates.
+        /// </summary>
+        /// <param name="mouse_pos"></param>
+        private void DrawCircle(System.Windows.Point mouse_pos)
+        {
+            // Set brush size
+            int brush_size = (int)Math.Floor(writting_canvas.Width * 0.09);
+
+            // Create the circle
+            Ellipse myEllipse = new Ellipse();
+            myEllipse.Stroke = Brushes.Black;
+            myEllipse.Fill = Brushes.Black;
+            myEllipse.Width = brush_size;
+            myEllipse.Height = brush_size;
+
+            // Set location of circle to be at the end of the cursor icon's point.
+            Canvas.SetTop(myEllipse, mouse_pos.Y - 20);
+            Canvas.SetLeft(myEllipse, mouse_pos.X - 20);
+
+            // Add the circle to the canvas
+            writting_canvas.Children.Add(myEllipse);
+        }
+
+
+        /// <summary>
+        ///         Setup Content and Demos 
+        /// </summary>
+
 
         /// <summary>
         /// A quick demo to help render the overal heatmap of the data
         /// </summary>
-        public void Demo_RenderImageFromTestData(string training_data_path)
+        private void Demo_RenderImageFromTestData(string training_data_path)
         {
             // Setup Data
             List<double> row_data = helperClass.GetListFromDataPath(training_data_path + "row.csv");
@@ -78,7 +174,7 @@ namespace Custom_Optical_Character_Recognition_System
         /// </summary>
         /// <param name="input_image_file_path">Full path of the .png file to analyze</param>
         /// <param name="data_file_path">>Path to the Data folder of the project as a string</param>
-        public void Demo_EvaluateInput(string input_image_file_path, string data_file_path)
+        private void Demo_EvaluateInput(string input_image_file_path, string data_file_path)
         {
             // Setup data
             // Item 1: row data     Item 2: column data
@@ -100,7 +196,7 @@ namespace Custom_Optical_Character_Recognition_System
         /// </summary>
         /// <param name="data_file_path">Path to the Data folder of the project as a string</param>
         /// <returns></returns>
-        public void RunAccuracyTest(string data_file_path)
+        private void RunAccuracyTest(string data_file_path)
         {
             string result = "";
             int total_score = 0;
@@ -127,49 +223,15 @@ namespace Custom_Optical_Character_Recognition_System
             lblData.Content = $"Total Score: {total_score}%" + result;
         }
 
+
         /// <summary>
-        /// returns a tuple with the data corresponding to the difference rate and the value the algorithm recognized.
-        /// <para>Item 1: (double) Difference Rate</para>
-        /// <para>Item 2: (int) Value the algorithm recognized</para>
+        ///         This is the start of the event listeners. 
         /// </summary>
-        /// <param name="data_file_path"> Path to the Data folder of the project as a string</param>
-        /// <returns></returns>
-        public (double, int) GetInputValFromAlgorithm(string data_file_path)
-        {
-            double column_rate;
-            double row_rate;
-            // Set Item1 to be 100% different  |   Set Item2 at the current likeliest value
-            (double, int) lowest_difference_rate = (100, -1);
-            for (int folder_num = 0; folder_num <= 9; folder_num++)
-            {
-                column_rate = algorithm.CompareInputDataToTrainingData(data_file_path + $"{folder_num}\\Averages\\column.csv", data_file_path + "input_columns.csv");
-                row_rate = algorithm.CompareInputDataToTrainingData(data_file_path + $"{folder_num}\\Averages\\row.csv", data_file_path + "input_rows.csv");
 
-                if ((column_rate + row_rate) / 2 < lowest_difference_rate.Item1)
-                {
-                    lowest_difference_rate.Item1 = (column_rate + row_rate) / 2;
-                    lowest_difference_rate.Item2 = folder_num;
-                }
-            }
-
-            return lowest_difference_rate;
-        }
-
-        public void SetupUiStyling()
-        {
-            // Colour UI components
-            lbl_DisplayText.Foreground = accent_colour2;
-            lblData.Foreground = accent_colour2;
-            lbl_Info.Foreground = accent_colour2;
-        }
-
-        private void SetupInfoLabel(string message)
-        {
-            lbl_Info.Text = message;
-        }
 
         private void btn_render_image_from_data_Click(object sender, EventArgs e)
         {
+            ClearUI();
             try
             {
                 Demo_RenderImageFromTestData(training_data_path);
@@ -178,12 +240,13 @@ namespace Custom_Optical_Character_Recognition_System
             catch (Exception ex)
             {
                 lbl_DisplayText.Content = "Could not run demo. Try reseting the data to the backed up images.";
-                lblData.Content = "";
+                lblData.Content = "\nEVENT: btn_render_image_from_data_Click\nEXCEPTION: " + ex; ;
             }
         }
 
         private void btn_reset_data_Click(object sender, EventArgs e)
         {
+            ClearUI();
             logic.GenerateTrainingDataFromTrainingImages(data_file_path);
             lbl_DisplayText.Content = "Training Data Has Successfully Backed Up Using Training_Images";
 
@@ -195,6 +258,7 @@ namespace Custom_Optical_Character_Recognition_System
 
         private void btn_analyze_input_data_Click(object sender, EventArgs e)
         {
+            ClearUI();
             try
             {
                 Demo_EvaluateInput(input_image_file_path, data_file_path);
@@ -204,12 +268,13 @@ namespace Custom_Optical_Character_Recognition_System
             catch (Exception ex)
             {
                 lbl_DisplayText.Content = "Could not run demo. Try reseting the data to the backed up images.";
-                lblData.Content = "";
+                lblData.Content = "\nEVENT: btn_analyze_input_data_Click\nEXCEPTION: " + ex; ;
             }
         }
 
         private void btn_accuracy_test_Click(object sender, EventArgs e)
         {
+            ClearUI();
             try
             {
                 RunAccuracyTest(data_file_path);
@@ -218,8 +283,45 @@ namespace Custom_Optical_Character_Recognition_System
             catch (Exception ex)
             {
                 lbl_DisplayText.Content = "Could not run demo. Try reseting the data to the backed up images.";
-                lblData.Content = e + "";
+                lblData.Content = e + "\nEVENT: btn_accuracy_test_Click\nEXCEPTION: " + ex;
             }
+        }
+
+
+        // writting_canvas Events
+        private void btn_writting_canvas_Click(object sender, EventArgs e)
+        {
+            ClearUI();
+            lbl_Info.Text = "Write a digit between 0-9 and press the buttons below to use as training data.\nLeft Click = Draw\nRight Click = Clear";
+            writting_canvas.IsEnabled = true;
+            writting_canvas.Visibility = Visibility.Visible;
+            BrushConverter converter = new BrushConverter();
+            writting_canvas.Background = (SolidColorBrush)converter.ConvertFromString("#FFFFFF");
+        }
+
+
+        /// <summary>
+        /// Creates a circle from the cursor position relative to the canvas.
+        /// </summary>
+        private void writting_canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                System.Windows.Point mouse_pos = e.GetPosition(writting_canvas);
+                DrawCircle(mouse_pos);
+            }
+        }
+
+        private void draw_LeftMouseBtnDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+                DrawCircle(e.GetPosition(writting_canvas));
+        }
+
+        private void writting_canvas_RightMouseBtnDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+                ClearCanvas();
         }
     }
 }

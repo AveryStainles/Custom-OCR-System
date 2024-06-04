@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Custom OCR System" Height="720" Width="600" Background="#11000F">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid>
+        <Grid x:Name="grid_display_layer">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -33,6 +33,7 @@
                         />
                         <MenuItem Header="CANVAS" 
                               x:Name="btn_writting_canvas"
+                              Click="btn_writting_canvas_Click"
                               Background="#302938"
                         />
                         <MenuItem Header="Reset Training Data Using Training_Images" 
@@ -47,7 +48,7 @@
             <TextBlock x:Name="lbl_Info" Grid.Row="0" FontFamily="Calibri" FontSize="18" Margin="26" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             <Label x:Name="lbl_DisplayText" Grid.Row="1" FontFamily="Courier New" FontSize="22" HorizontalAlignment="Center" FontWeight="Bold" Content="Display"/>
             <Label x:Name="lblData" Grid.Row="2" FontFamily="Courier New" FontSize="18" HorizontalAlignment="Center" Content="Data"/>
-            <Canvas x:Name="writting_canvas" Grid.Row="1" Height="450" Width="450" Cursor="Pen" IsEnabled="False"/>
+            <Canvas x:Name="writting_canvas" Grid.Row="1" Cursor="Pen" IsEnabled="False" MouseLeftButtonDown="draw_LeftMouseBtnDown" MouseMove="writting_canvas_MouseMove" MouseRightButtonDown="writting_canvas_RightMouseBtnDown" Width="450" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Grid>
     </ScrollViewer>
 </Window>
