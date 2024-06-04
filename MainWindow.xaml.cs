@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 using System.Linq;
@@ -8,6 +7,11 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using Brushes = System.Windows.Media.Brushes;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.IO;
+using System.Drawing;
+using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Custom_Optical_Character_Recognition_System
 {
@@ -23,7 +27,6 @@ namespace Custom_Optical_Character_Recognition_System
         // Setup Paths
         public static string data_file_path { get; set; } = "C:\\Users\\fox-r\\source\\repos\\AveryStainles\\AveryStainles\\Custom_Optical_Character_Recognition_System\\Data\\";
         public string input_image_file_path { get; set; } = data_file_path + "ImageInput.png";
-        public string training_data_path { get; set; } = data_file_path + "0\\Averages\\";
 
         // Application Colours
         public SolidColorBrush secondary_colour { get; set; }
@@ -141,10 +144,93 @@ namespace Custom_Optical_Character_Recognition_System
             writting_canvas.Children.Add(myEllipse);
         }
 
+        /// <summary>
+        /// Veryifies that the cursor is in the canvas boundaries
+        /// </summary>
+        public bool IsMouseInCanvasBounderies(System.Windows.Point mouse_pos)
+        {
+            int brush_size = (int)Math.Floor(writting_canvas.Width * 0.08);
+            if (mouse_pos.X < (0 + brush_size / 2)) { return false; }
+            if (mouse_pos.Y < (0 + brush_size / 2)) { return false; }
+            if (mouse_pos.X > (writting_canvas.Width - (brush_size / 2))) { return false; }
+            if (mouse_pos.Y > (writting_canvas.Height - (brush_size / 2))) { return false; }
+            return true;
+        }
+
 
         /// <summary>
         ///         Setup Content and Demos 
         /// </summary>
+        /// 
+
+        private void Demo_AnalyzeCanvasReport()
+        {
+            ConvertCanvasToBitmap();
+
+            // Setup data variables
+            (List<double>, List<double>) img_data = logic.GetImageData(input_image_file_path);
+            var original_row = img_data.Item1;
+            var original_col = img_data.Item2;
+            var scaled_row = algorithm.ScaleDataDown(original_row);
+            var scaled_col = algorithm.ScaleDataDown(original_col);
+
+            // Setup Report text
+            string report = $"original size: {original_col.Count()}px by {original_row.Count()}px";
+            report += $"\noriginal row average: {original_row.Average()}";
+            report += $"\noriginal column average: {original_col.Average()}";
+            report += $"\n\nnew size: {scaled_row.Count()}px by {scaled_col.Count()}px";
+            report += $"\nnew row average: {scaled_row.Average()}";
+            report += $"\nnew column average: {scaled_col.Average()}";
+            report += $"\n\nNormalized Difference Row: {original_row.Average() - scaled_row.Average()}";
+            report += $"\nNormalized Difference Col: {original_col.Average() - scaled_col.Average()}";
+
+            // Save scaled data
+            helperClass.WriteToFile(data_file_path + "input_rows.csv", String.Join(",", scaled_row));
+            helperClass.WriteToFile(data_file_path + "input_columns.csv", String.Join(",", scaled_col));
+
+            // Add final analysis to report file
+            (double, int) analyzed_value = GetInputValFromAlgorithm(data_file_path);
+            report += $"\n\n Analysis: {analyzed_value.Item2} \n Difference: {analyzed_value.Item1}";
+
+            // Save report file
+            helperClass.WriteToFile(data_file_path + "report.txt", report);
+
+
+            //System.Windows.MessageBox.Show("Files Saved Succesfully", "Saving Status",
+            //                  (MessageBoxButton)MessageBoxButtons.OK,
+            //                  (MessageBoxImage)MessageBoxIcon.Question);
+        }
+
+        ///
+        /// Source: https://dotnetqueries.wordpress.com/tag/how-to-convert-wpf-canvas-to-bitmap-image-using-c-net/
+        ///
+        public void ConvertCanvasToBitmap(string filename = "ImageInput.png")
+        {
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
+            (int)writting_canvas.Width,
+            (int)writting_canvas.Height,
+            96d,
+            96d,
+            PixelFormats.Pbgra32);
+
+            //RenderTargetBitmap renderBitmap = new RenderTargetBitmap(1800, 200,96d, 96d, PixelFormats.Pbgra32);
+
+            // needed otherwise the image output is black
+            writting_canvas.Measure(new System.Windows.Size((int)writting_canvas.Width, (int)writting_canvas.Height));
+            writting_canvas.Arrange(new Rect(new System.Windows.Size((int)writting_canvas.Width, (int)writting_canvas.Height)));
+
+            renderBitmap.Render(writting_canvas);
+
+            // for png bitmap
+            PngBitmapEncoder encoder = new PngBitmapEncoder();
+
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            using (FileStream fs = File.Create(data_file_path + filename))
+            {
+                encoder.Save(fs);
+            }
+        }
 
 
         /// <summary>
@@ -158,8 +244,8 @@ namespace Custom_Optical_Character_Recognition_System
 
             // Render Image From Training Data
             double heat_sensitivity_rate = 1.3;
-            string test = logic.RenderImageFromData(row_data, column_data, heat_sensitivity_rate);
-            lbl_DisplayText.Content = test;
+            string render = logic.RenderImageFromData(row_data, column_data, heat_sensitivity_rate);
+            lbl_DisplayText.Content = render;
 
             // Load Data About The Render
             lblData.Content = $"Row Average: {Math.Round(row_data.Average(), 3)}\nCol Average: {Math.Round(column_data.Average(), 3)}" + "\n\n";
@@ -234,7 +320,7 @@ namespace Custom_Optical_Character_Recognition_System
             ClearUI();
             try
             {
-                Demo_RenderImageFromTestData(training_data_path);
+                Demo_RenderImageFromTestData(data_file_path + "0\\Averages\\");
                 SetupInfoLabel("Recover an approximate render of the image from the collected data." + "\nIn this example the render is an average of all the data used to train 0");
             }
             catch (Exception ex)
@@ -305,23 +391,28 @@ namespace Custom_Optical_Character_Recognition_System
         /// </summary>
         private void writting_canvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+
+            System.Windows.Point mouse_pos = e.GetPosition(writting_canvas);
+            if (e.LeftButton == MouseButtonState.Pressed && IsMouseInCanvasBounderies(mouse_pos))
             {
-                System.Windows.Point mouse_pos = e.GetPosition(writting_canvas);
                 DrawCircle(mouse_pos);
             }
         }
 
         private void draw_LeftMouseBtnDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == MouseButtonState.Pressed)
+            if (e.ButtonState == MouseButtonState.Pressed && IsMouseInCanvasBounderies(e.GetPosition(writting_canvas)))
                 DrawCircle(e.GetPosition(writting_canvas));
         }
 
         private void writting_canvas_RightMouseBtnDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed)
-                ClearCanvas();
+            {
+                Demo_AnalyzeCanvasReport();
+            }
+
+            ClearCanvas();
         }
     }
 }
