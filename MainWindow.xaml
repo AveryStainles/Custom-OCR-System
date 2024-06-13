@@ -4,50 +4,73 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Custom_Optical_Character_Recognition_System"
+        xmlns:viewModel="clr-namespace:Custom_Optical_Character_Recognition_System.MVVM.ViewModel"
         mc:Ignorable="d"
-        Title="Custom OCR System" Height="720" Width="600" Background="#11000F">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        Height="600" Width="920"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="Transparent"
+        AllowsTransparency="True"
+        AllowDrop="True"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.DataContext>
+        <viewModel:MainViewModel/>
+    </Window.DataContext>
+
+    <Border Background="#11000F"
+          CornerRadius="20">
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="75"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <DockPanel>
-                <Menu DockPanel.Dock="Top" Background="#170013" Foreground="#F2EBFF">
-                    <MenuItem Header="Option" x:Name="menu_option" Background="#302938" HorizontalAlignment="Center" Height="24" Width="50">
-                        <MenuItem Header="DEMO: Analyze Image"
-                              x:Name="btn_analyze_input_data" 
-                              Click="btn_analyze_input_data_Click"
-                              Background="#302938"
-                        />
-                        <MenuItem Header="DEMO: Render Image From Data" 
-                              x:Name="btn_render_image_from_data" 
-                              Click="btn_render_image_from_data_Click"
-                              Background="#302938"
-                        />
-                        <MenuItem Header="Run Accuracy Test" 
-                              x:Name="btn_accuracy_test" 
-                              Click="btn_accuracy_test_Click"
-                              Background="#302938"
-                        />
-                        <MenuItem Header="CANVAS" 
-                              x:Name="btn_writting_canvas"
-                              Background="#302938"
-                        />
-                        <MenuItem Header="Reset Training Data Using Training_Images" 
-                              x:Name="btn_reset_data"
-                              Click="btn_reset_data_Click"
-                              Background="#302938"
-                        />
-                    </MenuItem>
-                </Menu>
-            </DockPanel>
 
-            <TextBlock x:Name="lbl_Info" Grid.Row="0" FontFamily="Calibri" FontSize="18" Margin="26" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <Label x:Name="lbl_DisplayText" Grid.Row="1" FontFamily="Courier New" FontSize="22" HorizontalAlignment="Center" FontWeight="Bold" Content="Display"/>
-            <Label x:Name="lblData" Grid.Row="2" FontFamily="Courier New" FontSize="18" HorizontalAlignment="Center" Content="Data"/>
-            <Canvas x:Name="writting_canvas" Grid.Row="1" Height="450" Width="450" Cursor="Pen" IsEnabled="False"/>
+            <TextBlock
+                    Text="OCR System"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left"
+                    Margin="20, 0, 0, 0"
+                    Foreground="#F2EBFF"
+                    FontSize="22"/>
+
+            <StackPanel Grid.Row="1">
+
+                <RadioButton x:Name="train_data_radio_btn"
+                             Content="Train OCR System"
+                             Height="50"
+                             Foreground="#F2EBFF"
+                             FontSize="14"
+                             Style="{StaticResource MenuBtnTheme}"
+                             IsChecked="True"
+                             Command="{Binding TrainAlgViewCommand}"/>
+
+                <RadioButton Content="Settings"
+                             Height="50"
+                             Foreground="#F2EBFF"
+                             FontSize="14"
+                             Style="{StaticResource MenuBtnTheme}"
+                             Command="{Binding SettingViewCommand}"/>
+
+                <RadioButton x:Name="exit_radio_btn" 
+                             Content="Exit"
+                             Height="50"
+                             Foreground="#F2EBFF"
+                             FontSize="14"
+                             Style="{StaticResource MenuBtnTheme}"
+                             Command="{Binding ExitApplicationCommand}"/>
+
+            </StackPanel>
+
+            <ContentControl Grid.Column="1"
+                            Grid.RowSpan="2"
+                            Content="{Binding CurrentView}"/>
+
         </Grid>
-    </ScrollViewer>
+    </Border>
 </Window>

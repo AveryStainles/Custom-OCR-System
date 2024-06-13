@@ -1,0 +1,13 @@
+original size: 450px by 450px
+original row average: 0.899386918450732
+original column average: 0.899386918450733
+
+new size: 15px by 15px
+new row average: 0.843175236047562
+new column average: 0.843175236047563
+
+Normalized Difference Row: 0.0562116824031701
+Normalized Difference Col: 0.0562116824031704
+
+ Analysis: 1 
+ Difference: 0.156872265057468

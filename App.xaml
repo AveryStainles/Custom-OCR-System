@@ -2,8 +2,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Custom_Optical_Character_Recognition_System"
+             xmlns:viewModel="clr-namespace:Custom_Optical_Character_Recognition_System.MVVM.ViewModel"
+             xmlns:view="clr-namespace:Custom_Optical_Character_Recognition_System.MVVM.View"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/MenuBtnTheme.xaml"/> 
+                <ResourceDictionary Source="Themes/CanvasTrainingBtnTheme.xaml"/>
+                <ResourceDictionary Source="Themes/ScrollBarTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type viewModel:TrainAlgViewModel}">
+                <view:TrainAlgView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewModel:SettingsViewModel}">
+                <view:SettingsView/>
+            </DataTemplate>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
