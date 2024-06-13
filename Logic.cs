@@ -155,7 +155,7 @@ namespace Custom_Optical_Character_Recognition_System
             public Algorithm() { }
 
 
-            // TODO: Restrict canvas sizes to 
+            // IDEA: Restrict canvas sizes to multiples of 64
             public List<double> ScaleDataDown(List<double> data)
             {
                 int normalized_image_scale = 14;
@@ -198,19 +198,7 @@ namespace Custom_Optical_Character_Recognition_System
 
 
             /// <summary>
-            /// Gets the difference rate from specified files
-            /// </summary>
-            public double CompareInputDataToTrainingData(string training_data_path, string input_data_path)
-            {
-                // Compare Difference Rate
-                List<double> training_data = helperClass.GetListFromDataPath(training_data_path);
-                List<double> user_data = helperClass.GetListFromDataPath(input_data_path);
-                double rate = GetDifferenceRates(training_data, user_data);
-                return rate;
-            }
-
-            /// <summary>
-            /// Puts the last element of the array to the front of it. This lines up the png to the bottom right. Caution, this modifies the original array.
+            /// Removes the last item of the and inserts it at the front
             /// </summary>
             /// <param name="list"></param>
             public void CycleValues(List<double> list)
@@ -221,39 +209,30 @@ namespace Custom_Optical_Character_Recognition_System
             }
 
             /// <summary>
-            ///     Returns the average of the total rates
+            /// When subtracting the elements from the training data to the elements of the input data, you end up with a differenceRate.
+            /// This is used to see how different the input data is to the training data. As differenceRate approaches 0, it'll representitively
+            /// show how likely the current training data is to match with the input data.
             /// </summary>
-            /// <returns></returns>
-            private double GetDifferenceRates(List<double> t_data, List<double> in_data)
+            /// <param name="training_data_path"></param>
+            /// <param name="input_data_path"></param>
+            public double CompareInputDataToTrainingData(string training_data_path, string input_data_path)
             {
-                double differenceRate = 100; // 100% different
-                List<double> all_img_difference_rate = new List<double>();
-
-                for (int cycle_index = 0; cycle_index < in_data.Count; cycle_index++)
-                {
-                    double img_difference_rate = GetComparedImagesRate(t_data, in_data);
-                    all_img_difference_rate.Add(img_difference_rate);
-                    if (img_difference_rate < differenceRate) { differenceRate = img_difference_rate; }
-                }
-                return differenceRate;
-            }
-
-            private double GetComparedImagesRate(List<double> t_data, List<double> in_data)
-            {
+                List<double> training_data = helperClass.GetListFromDataPath(training_data_path);
+                List<double> user_data = helperClass.GetListFromDataPath(input_data_path);
                 double differenceRate = 0;
 
-                // returns a cumulative difference between each values 
-                // If the difference is negative, it is turned positive to avoid skewing data
-                for (int index = 0; index < t_data.Count; index++)
+                for (int index = 0; index < training_data.Count; index++)
                 {
-                    var hold_value = t_data[index] - in_data[index];
-                    differenceRate += (hold_value < 0 ? hold_value * -1 : hold_value);
+                    // difference between training data and input data
+                    var data_difference = training_data[index] - user_data[index];
+
+                    // if differenceRate is negative, force it into positive
+                    differenceRate += (data_difference < 0 ? data_difference * -1 : data_difference);
                 }
 
-                var average_difference_rate = differenceRate / t_data.Count;
-                return average_difference_rate;
+                // Return average difference
+                return differenceRate / training_data.Count;
             }
-
         }
     }
 }

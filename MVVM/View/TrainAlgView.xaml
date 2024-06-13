@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="Custom_Optical_Character_Recognition_System.MVVM.View.TrainAlgView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Custom_Optical_Character_Recognition_System.MVVM.View"
+             mc:Ignorable="d" 
+             MouseWheel="Horizontal_Scrolling"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Name="training_data_view_window">
+
+    <Border Background="#1F001F"
+            CornerRadius="20">
+        
+        
+        <StackPanel CanVerticallyScroll="True"
+                HorizontalAlignment="Center">
+            
+            <TextBlock x:Name="info_textBlock" 
+                       Foreground="#F2EBFF"
+                       Text="This is example Text" 
+                       FontSize="14"
+                       TextAlignment="Center"
+                       Margin="10"
+                       HorizontalAlignment="Stretch"/>
+
+            <Canvas x:Name="drawing_canvas"
+                    Grid.Column="2"
+                    Height="512"
+                    Width="512"
+                    Background="White"
+                    Cursor="Pen" MouseRightButtonDown="drawing_canvas_RightMouseBtnDown" MouseMove="drawing_canvas_MouseMove" MouseLeftButtonDown="drawing_canvas_LeftMouseBtnDown"/>
+
+            <ScrollViewer x:Name="training_data_scrollbar"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Hidden">
+
+                <StackPanel CanHorizontallyScroll="True" Orientation="Horizontal" MouseWheel="Horizontal_Scrolling">
+                    <Button x:Name="btn_analyze" Content="🔃"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="recognize_canvas_value_Click"/>
+
+                    <Button Content="0"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="1"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="2"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="3"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="4"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="5"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="6"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="7"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="8"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button Content="9"
+                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                </StackPanel>
+
+            </ScrollViewer>
+        </StackPanel>
+    </Border>
+</UserControl>
