@@ -109,7 +109,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
             Console.WriteLine($"AveryDebug: Convert Canvas to Bitmap\t{((bitmap.GetType() == typeof(System.Drawing.Bitmap)) ? "Passed" : "Failed")}");
             Console.WriteLine($"AveryDebug: Scale Bitmap\t\t\t\t{((bitmap.Width == 128 && bitmap.Height == 128) ? "Passed" : "Failed")}");
-            return bitmap_data; ;
+            return bitmap_data;
         }
     }
 }
