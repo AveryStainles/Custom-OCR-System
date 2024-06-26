@@ -123,15 +123,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Themes\CanvasFunctionalBtnTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\CanvasTrainingBtnTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\MenuBtnTheme.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\ScrollBarTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,6 +214,18 @@
   <ItemGroup>
     <Folder Include=".git\objects\info\" />
     <Folder Include=".git\refs\tags\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CustomIcons\ic_OCR.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CustomIcons\ic_clear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CustomIcons\ic_add_new_training_data.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CustomIcons\ic_Undo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

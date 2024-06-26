@@ -5,72 +5,134 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Custom_Optical_Character_Recognition_System.MVVM.View"
              mc:Ignorable="d" 
-             MouseWheel="Horizontal_Scrolling"
              d:DesignHeight="450" d:DesignWidth="800"
              Name="training_data_view_window">
 
     <Border Background="#1F001F"
             CornerRadius="20">
-        
-        
-        <StackPanel CanVerticallyScroll="True"
-                HorizontalAlignment="Center">
-            
-            <TextBlock x:Name="info_textBlock" 
-                       Foreground="#F2EBFF"
-                       Text="This is example Text" 
-                       FontSize="14"
-                       TextAlignment="Center"
-                       Margin="10"
-                       HorizontalAlignment="Stretch"/>
+        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="578"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-            <Canvas x:Name="drawing_canvas"
-                    Grid.Column="2"
-                    Height="512"
-                    Width="512"
-                    Background="White"
-                    Cursor="Pen" MouseRightButtonDown="drawing_canvas_RightMouseBtnDown" MouseMove="drawing_canvas_MouseMove" MouseLeftButtonDown="drawing_canvas_LeftMouseBtnDown"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="578"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-            <ScrollViewer x:Name="training_data_scrollbar"
-                            HorizontalScrollBarVisibility="Hidden"
-                            VerticalScrollBarVisibility="Hidden">
+                <!-- Canvas Properties -->
+                <Canvas x:Name="drawing_canvas"
+                        Height="512"
+                        Width="512"
+                        Margin="32"
+                        Background="White"
+                        Cursor="Pen" 
+                        MouseRightButtonDown="Drawing_Canvas_RightMouseBtnDown" 
+                        MouseMove="Drawing_Canvas_MouseMove" 
+                        MouseLeftButtonDown="Drawing_Canvas_LeftMouseBtnDown"/>
 
-                <StackPanel CanHorizontallyScroll="True" Orientation="Horizontal" MouseWheel="Horizontal_Scrolling">
-                    <Button x:Name="btn_analyze" Content="🔃"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="recognize_canvas_value_Click"/>
+                <Border CornerRadius="20"
+                        Margin="0, 32, 16, 32"
+                        Grid.Column="1"
+                        Background="#11000F">
 
-                    <Button Content="0"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <StackPanel x:Name="functional_buttons_stackPanel"
+                                Orientation="Vertical"
+                                HorizontalAlignment="Left"
+                                Margin="32">
 
-                    <Button Content="1"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                        <Button x:Name="btn_ocr"
+                                Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_OCR_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/CustomIcons/ic_OCR.png"/>
+                            </Button.Background>
+                        </Button>
 
-                    <Button Content="2"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                        <Button x:Name="btn_clear_canvas"
+                            Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_Clear_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/CustomIcons/ic_clear.png"/>
+                            </Button.Background>
+                        </Button>
 
-                    <Button Content="3"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                        <Button x:Name="btn_add_new_training_category"
+                                Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_New_Training_Category_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/CustomIcons/ic_add_new_training_data.png"/>
+                            </Button.Background>
+                        </Button>
+                        
+                        <Button x:Name="btn_undo_last_canvas_change"
+                            Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_Undo_Click">
+                            <Button.Background>
+                                <ImageBrush ImageSource="/CustomIcons/ic_Undo.png"/>
+                            </Button.Background>
+                        </Button>
 
-                    <Button Content="4"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    </StackPanel>
+                </Border>
 
-                    <Button Content="5"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
-                    <Button Content="6"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                <!--#region | Buttons for Training the data and arrow to see the next/previous training buttons-->
+                <StackPanel x:Name="training_buttons_panel"
+                                Orientation="Horizontal"
+                                Grid.Row="4"
+                                Grid.ColumnSpan="5">
 
-                    <Button Content="7"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <Button x:Name="btn_previous_training_data"
+                                Content="⬅"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Recognize_Canvas_Value_Click"/>
 
-                    <Button Content="8"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <Button x:Name="btn_next_training_data"
+                                Content="➡"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Recognize_Canvas_Value_Click"/>
 
-                    <Button Content="9"
-                        Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <Button x:Name="training_btn_1"
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_2"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_3"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_4"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_5"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_6"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
+                    <Button x:Name="training_btn_7"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <Button x:Name="training_btn_8"
+                            
+                            Content="O"
+                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+
                 </StackPanel>
+                <!--#endregion | Buttons for Training the data and arrow to see the next/previous training buttons-->
 
-            </ScrollViewer>
-        </StackPanel>
+
+            </Grid>
+
+        </ScrollViewer>
     </Border>
 </UserControl>

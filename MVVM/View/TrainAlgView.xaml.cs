@@ -17,6 +17,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
     {
         private DataAlgorithm dataAlgorithm = new DataAlgorithm();
         private CanvasFunctions canvas_helper = new CanvasFunctions();
+
         public TrainAlgView()
         {
             InitializeComponent();
@@ -24,20 +25,21 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
 
         // Clears the canvas on right click
-        private void drawing_canvas_RightMouseBtnDown(object sender, MouseButtonEventArgs e)
+        private void Drawing_Canvas_RightMouseBtnDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ButtonState == MouseButtonState.Pressed) { CanvasFunctions.ClearCanvas(drawing_canvas); }
         }
 
 
         // Draws a circle on mouse click
-        private void drawing_canvas_LeftMouseBtnDown(object sender, MouseButtonEventArgs e)
+        private void Drawing_Canvas_LeftMouseBtnDown(object sender, MouseButtonEventArgs e)
         {
             canvas_helper.DrawCircle(e.GetPosition(drawing_canvas), drawing_canvas);
         }
 
+
         // Draws on mouse movement
-        private void drawing_canvas_MouseMove(object sender, MouseEventArgs e)
+        private void Drawing_Canvas_MouseMove(object sender, MouseEventArgs e)
         {
             Point mouse_pos = e.GetPosition(drawing_canvas);
             if (e.LeftButton == MouseButtonState.Pressed && canvas_helper.IsMouseInCanvasBounderies(mouse_pos, drawing_canvas))
@@ -46,19 +48,10 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             }
         }
 
-
         /// <summary>
-        /// Allows for horizontal scrolling with the Mouse Wheel
+        /// Updates training data corresponding to the content property of the clicked button.
+        /// Data is updated by reversing the average into a sum, then updated with the new data into a new total average.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Horizontal_Scrolling(object sender, MouseWheelEventArgs e)
-        {
-            // Scroll wheel up, stack panel scroll right | Scroll wheel down, stack panel scroll left
-            training_data_scrollbar.ScrollToHorizontalOffset(training_data_scrollbar.HorizontalOffset + Settings_Control.scrolling_speed
-                * ((e.Delta > 0) ? 1 : -1));
-        }
-
         private void Train_Data(object sender, RoutedEventArgs e)
         {
             Console.WriteLine($"AVERY DEBUG: {((Button)sender).Content} Button was Clicked!");
@@ -69,24 +62,19 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             // Update training data with new value
             DAO.UpdateTrainingDataByValue(((Button)sender).Content + "", canvas_input_data.Item1, canvas_input_data.Item2);
 
-            info_textBlock.Text = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
-
-            Console.WriteLine("\n\t\t--Button Click Report--");
-            Console.WriteLine($"AveryDebug: Crop drawing out of bitmap\t{((canvas_input_data.Item1[0] > 0 && canvas_input_data.Item2[0] > 0) ? "Passed" : "Failed")}");
-            Console.WriteLine("AveryDebug: Get Bitmap Data\n\t\t" + String.Join(", ", canvas_input_data.Item1) + "\n\t\t" + String.Join(", ", canvas_input_data.Item2));
-            Console.WriteLine($"AveryDebug: Save Complete");
+            //info_textBlock.Text = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
         }
+
 
         /// <summary>
         /// Button Click -> attempt recognizing value on canvas
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void recognize_canvas_value_Click(object sender, RoutedEventArgs e)
+        private void Recognize_Canvas_Value_Click(object sender, RoutedEventArgs e)
         {
             (List<double>, List<double>) canvas_input_data = SetImageDataFlow();
-            info_textBlock.Text = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
+            //info_textBlock.Text = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
         }
+
 
         private (List<double>, List<double>) SetImageDataFlow()
         {
@@ -101,15 +89,41 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             // Crop content out
             bitmap = canvas_funct.CropBitmap(bitmap);
 
-            // Scale bitmap to 128x128
+            // Scale bitmap to 128x128 pixels
             bitmap = canvas_funct.ScaleBitmap(bitmap, 128, 128);
 
             // Turn bitmap into usable data
             (List<double>, List<double>) bitmap_data = dataAlgorithm.GetImageData(bitmap);
 
-            Console.WriteLine($"AveryDebug: Convert Canvas to Bitmap\t{((bitmap.GetType() == typeof(System.Drawing.Bitmap)) ? "Passed" : "Failed")}");
-            Console.WriteLine($"AveryDebug: Scale Bitmap\t\t\t\t{((bitmap.Width == 128 && bitmap.Height == 128) ? "Passed" : "Failed")}");
             return bitmap_data;
+        }
+
+
+
+
+
+
+        /// Functional Buttons 
+        
+
+        private void Btn_OCR_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        
+
+        private void Btn_Clear_Click(object sender, RoutedEventArgs e) { CanvasFunctions.ClearCanvas(drawing_canvas); }
+
+
+        private void Btn_New_Training_Category_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        private void Btn_Undo_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

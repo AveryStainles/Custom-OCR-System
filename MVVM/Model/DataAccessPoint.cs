@@ -9,6 +9,8 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
     {
         // Setup Training Data
         private const string TRAINING_DATA_PATH = "..\\..\\DataSource\\training_data.ser";
+        public List<Training_Data> _data { get; set; } = new List<Training_Data>();
+
 
         public DataAccessPoint()
         {
@@ -21,9 +23,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 Console.WriteLine(file_not_found);
                 _data = new List<Training_Data>();
             }
-            Console.WriteLine("AVERY DEBUG: " + _data.ToString());
         }
-
 
 
         // save data
@@ -123,9 +123,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 
         // CLR Objects
 
-        public List<Training_Data> _data { get; set; } = new List<Training_Data>();
-
-
         public class Training_Data
         {
             public string Value { get; set; }
@@ -133,7 +130,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             public List<double> RowAverages { get; set; }
             public List<double> ColumnAverages { get; set; }
         }
-
     }
 }
 
