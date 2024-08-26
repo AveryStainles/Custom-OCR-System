@@ -59,7 +59,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 if (difference_rate < lowest_difference)
                 {
                     lowest_difference = difference_rate;
-                    recognized_value = "Value Identified: " + training_data.Value + "   |   Image training Count: " + training_data.TotalImagesUsedToTrain;
+                    recognized_value = training_data.Value;
                 }
             }
             return recognized_value;

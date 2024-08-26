@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
+using System.Windows.Forms;
+using System.Windows.Markup;
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
     internal class DataAccessPoint
@@ -33,6 +35,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             File.WriteAllText(filePath, json);
         }
 
+
         public void SaveAllTrainingData(string save_training_data_path = TRAINING_DATA_PATH)
         {
             if (_data != null || _data.Count > 0)
@@ -42,18 +45,11 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         }
 
 
-
         // get data
         public Training_Data DeserializeObject_Training_Data(string filePath)
         {
             return JsonSerializer.Deserialize<Training_Data>(File.ReadAllText(filePath));
         }
-
-        //public All_Training_Data DeserializeObject_All_Data(string filePath)
-        //{
-        //    return JsonSerializer.Deserialize<All_Training_Data>(File.ReadAllText(filePath));
-        //}
-
 
 
         // create data
@@ -65,7 +61,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 TotalImagesUsedToTrain = totalImgUsedToTrain,
                 RowAverages = rowAverages,
                 ColumnAverages = columnAverages
-
             };
 
             return new_training_data;
@@ -121,6 +116,34 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             SaveAllTrainingData();
         }
 
+        public int GetDataIndexByValue(string value)
+        {
+            for (int index = 0; index < _data.Count; index++)
+            {
+                // get value from training_data that matches button content
+                if (_data[index].Value == value) { return index; }
+            }
+            return -1;
+        }
+
+        public string CreateTrainingDataReport(string filePath = "..\\..\\DataSource\\training_data_report.txt")
+        {
+            string report = "General Information";
+            report += "\n\n Total Values Trained for OCR:\t" + _data.Count;
+
+            // Run accuracy
+
+            foreach (var trained_data in _data)
+            {
+                report += "\n\nValue:\t\t\t\t" + ((trained_data.Value.Length == 0) ? "\"\"" : trained_data.Value);
+                report += "\nCount of images used to train:\t" + trained_data.TotalImagesUsedToTrain;
+            }
+
+            return report;
+
+        }
+    
+
         // CLR Objects
 
         public class Training_Data
@@ -132,22 +155,3 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         }
     }
 }
-
-
-
-/*
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-List<data> _data = new List<data>();
-_data.Add(new data()
-{
-    Id = 1,
-    SSN = 2,
-    Message = "A Message"
-});
-
-string json = JsonSerializer.Serialize(_data);
-File.WriteAllText(@"D:\path.json", json);
-*/
-

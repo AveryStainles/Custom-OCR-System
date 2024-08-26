@@ -20,28 +20,44 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="578"/>
                     <RowDefinition/>
+                    <RowDefinition/>
                 </Grid.RowDefinitions>
 
                 <!-- Canvas Properties -->
                 <Canvas x:Name="drawing_canvas"
                         Height="512"
                         Width="512"
-                        Margin="32"
+                        VerticalAlignment="Center"
                         Background="White"
                         Cursor="Pen" 
                         MouseRightButtonDown="Drawing_Canvas_RightMouseBtnDown" 
                         MouseMove="Drawing_Canvas_MouseMove" 
                         MouseLeftButtonDown="Drawing_Canvas_LeftMouseBtnDown"/>
 
+                <!-- Function Buttons-->
                 <Border CornerRadius="20"
-                        Margin="0, 32, 16, 32"
                         Grid.Column="1"
+                        Grid.Row="0"
+                        Grid.RowSpan="3"
                         Background="#11000F">
 
                     <StackPanel x:Name="functional_buttons_stackPanel"
                                 Orientation="Vertical"
                                 HorizontalAlignment="Left"
                                 Margin="32">
+
+                        <Border BorderThickness="0, 0, 0, 2"
+                                BorderBrush="#F2EBFF"
+                                Padding="0, 0, 0, 16"
+                                Margin="0, 0, 0, 32">
+
+                            <Label x:Name="lbl_recognized_value" 
+                                   Content="\\"
+                                   FontSize="64"
+                                   Foreground="#F2EBFF"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"/>
+                        </Border>
 
                         <Button x:Name="btn_ocr"
                                 Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_OCR_Click">
@@ -63,7 +79,7 @@
                                 <ImageBrush ImageSource="/CustomIcons/ic_add_new_training_data.png"/>
                             </Button.Background>
                         </Button>
-                        
+
                         <Button x:Name="btn_undo_last_canvas_change"
                             Style="{StaticResource CanvasFunctionalBtnTheme}" Click="Btn_Undo_Click">
                             <Button.Background>
@@ -74,58 +90,53 @@
                     </StackPanel>
                 </Border>
 
+                <Border Grid.Column="0" 
+                        Grid.Row="2"
+                        BorderThickness="0, 2, 0, 0"
+                        BorderBrush="#F2EBFF">
+
+                    <TextBlock x:Name="txt_data_report" 
+                               FontSize="23"
+                               Padding="16"
+                               Foreground="#F2EBFF"
+                               TextWrapping="WrapWithOverflow"
+                               Text="I am going to be text explaining how this page works. Or data, haven't decided yet"/>
+                </Border>
+
 
                 <!--#region | Buttons for Training the data and arrow to see the next/previous training buttons-->
                 <StackPanel x:Name="training_buttons_panel"
-                                Orientation="Horizontal"
-                                Grid.Row="4"
-                                Grid.ColumnSpan="5">
-
+                            Orientation="Horizontal"
+                            Grid.Row="1"
+                            Grid.Column="0">
+                    
                     <Button x:Name="btn_previous_training_data"
-                                Content="⬅"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Recognize_Canvas_Value_Click"/>
+                            Content="⬅"
+                            IsEnabled="False"
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="GetPreviousTrainingButtonsClick" MouseRightButtonDown="PreviousTrainingBtn_FastScroll_Click"/>
 
-                    <Button x:Name="btn_next_training_data"
-                                Content="➡"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Recognize_Canvas_Value_Click"/>
 
+                    <!--  CAUTION!   Content for training_btn is used to find training data  -->
                     <Button x:Name="training_btn_1"
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                            Content=""
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
                     <Button x:Name="training_btn_2"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                            Content=""
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
                     <Button x:Name="training_btn_3"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                            Content=""
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
                     <Button x:Name="training_btn_4"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                            Content=""
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
-                    <Button x:Name="training_btn_5"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
 
-                    <Button x:Name="training_btn_6"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
-
-                    <Button x:Name="training_btn_7"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
-                    <Button x:Name="training_btn_8"
-                            
-                            Content="O"
-                                Style="{StaticResource CanvasTrainingBtnTheme}" Click="Train_Data"/>
+                    <Button x:Name="btn_next_training_data"
+                            Content="➡"
+                            Style="{StaticResource CanvasTrainingBtnTheme}" Click="GetNextTrainingButtonsClick" MouseRightButtonDown="NextTrainingBtn_FastScroll_Click"/>
 
                 </StackPanel>
                 <!--#endregion | Buttons for Training the data and arrow to see the next/previous training buttons-->

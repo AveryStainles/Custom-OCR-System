@@ -12,6 +12,7 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using Custom_Optical_Character_Recognition_System.MVVM.Model;
 
 namespace Custom_Optical_Character_Recognition_System
 {
@@ -24,6 +25,15 @@ namespace Custom_Optical_Character_Recognition_System
         public MainWindow()
         {
             InitializeComponent();
+            DataAccessPoint dao = new DataAccessPoint();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                this.DragMove();
+            }
         }
     }
 }
