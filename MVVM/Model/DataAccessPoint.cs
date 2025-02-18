@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text.Json;
+using System.Text;
+//using System.Text.Json;
 using System.Windows.Forms;
 using System.Windows.Markup;
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
@@ -18,7 +20,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         {
             try
             {
-                _data = JsonSerializer.Deserialize<List<Training_Data>>(File.ReadAllText(TRAINING_DATA_PATH));
+                _data = JsonConvert.DeserializeObject<List<Training_Data>>(File.ReadAllText(TRAINING_DATA_PATH));
             }
             catch (FileNotFoundException file_not_found)
             {
@@ -31,7 +33,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         // save data
         public void SerializeObject(string filePath, object obj)
         {
-            var json = JsonSerializer.Serialize(obj);
+            var json = JsonConvert.SerializeObject(obj);
             File.WriteAllText(filePath, json);
         }
 
@@ -48,7 +50,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         // get data
         public Training_Data DeserializeObject_Training_Data(string filePath)
         {
-            return JsonSerializer.Deserialize<Training_Data>(File.ReadAllText(filePath));
+            return JsonConvert.DeserializeObject<Training_Data>(File.ReadAllText(filePath));
         }
 
 
@@ -142,7 +144,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             return report;
 
         }
-    
+
 
         // CLR Objects
 
