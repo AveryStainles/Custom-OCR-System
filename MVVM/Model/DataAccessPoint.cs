@@ -1,37 +1,42 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text.Json;
+using System.Text;
+//using System.Text.Json;
+using System.Windows.Forms;
+using System.Windows.Markup;
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
     internal class DataAccessPoint
     {
         // Setup Training Data
         private const string TRAINING_DATA_PATH = "..\\..\\DataSource\\training_data.ser";
+        public List<Training_Data> _data { get; set; } = new List<Training_Data>();
+
 
         public DataAccessPoint()
         {
             try
             {
-                _data = JsonSerializer.Deserialize<List<Training_Data>>(File.ReadAllText(TRAINING_DATA_PATH));
+                _data = JsonConvert.DeserializeObject<List<Training_Data>>(File.ReadAllText(TRAINING_DATA_PATH));
             }
             catch (FileNotFoundException file_not_found)
             {
                 Console.WriteLine(file_not_found);
                 _data = new List<Training_Data>();
             }
-            Console.WriteLine("AVERY DEBUG: " + _data.ToString());
         }
-
 
 
         // save data
         public void SerializeObject(string filePath, object obj)
         {
-            var json = JsonSerializer.Serialize(obj);
+            var json = JsonConvert.SerializeObject(obj);
             File.WriteAllText(filePath, json);
         }
+
 
         public void SaveAllTrainingData(string save_training_data_path = TRAINING_DATA_PATH)
         {
@@ -42,18 +47,11 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         }
 
 
-
         // get data
         public Training_Data DeserializeObject_Training_Data(string filePath)
         {
-            return JsonSerializer.Deserialize<Training_Data>(File.ReadAllText(filePath));
+            return JsonConvert.DeserializeObject<Training_Data>(File.ReadAllText(filePath));
         }
-
-        //public All_Training_Data DeserializeObject_All_Data(string filePath)
-        //{
-        //    return JsonSerializer.Deserialize<All_Training_Data>(File.ReadAllText(filePath));
-        //}
-
 
 
         // create data
@@ -65,7 +63,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 TotalImagesUsedToTrain = totalImgUsedToTrain,
                 RowAverages = rowAverages,
                 ColumnAverages = columnAverages
-
             };
 
             return new_training_data;
@@ -121,10 +118,35 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             SaveAllTrainingData();
         }
 
+        public int GetDataIndexByValue(string value)
+        {
+            for (int index = 0; index < _data.Count; index++)
+            {
+                // get value from training_data that matches button content
+                if (_data[index].Value == value) { return index; }
+            }
+            return -1;
+        }
+
+        public string CreateTrainingDataReport(string filePath = "..\\..\\DataSource\\training_data_report.txt")
+        {
+            string report = "General Information";
+            report += "\n\n Total Values Trained for OCR:\t" + _data.Count;
+
+            // Run accuracy
+
+            foreach (var trained_data in _data)
+            {
+                report += "\n\nValue:\t\t\t\t" + ((trained_data.Value.Length == 0) ? "\"\"" : trained_data.Value);
+                report += "\nCount of images used to train:\t" + trained_data.TotalImagesUsedToTrain;
+            }
+
+            return report;
+
+        }
+
+
         // CLR Objects
-
-        public List<Training_Data> _data { get; set; } = new List<Training_Data>();
-
 
         public class Training_Data
         {
@@ -133,25 +155,5 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             public List<double> RowAverages { get; set; }
             public List<double> ColumnAverages { get; set; }
         }
-
     }
 }
-
-
-
-/*
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-List<data> _data = new List<data>();
-_data.Add(new data()
-{
-    Id = 1,
-    SSN = 2,
-    Message = "A Message"
-});
-
-string json = JsonSerializer.Serialize(_data);
-File.WriteAllText(@"D:\path.json", json);
-*/
-

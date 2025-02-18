@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -70,7 +65,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 
             // needed otherwise the image output is black
             input_canvas.Measure(new Size((int)input_canvas.Width, (int)input_canvas.Height));
-            input_canvas.Arrange(new Rect(canvas_starting_pos.X, canvas_starting_pos.Y, (int)input_canvas.Width, (int)input_canvas.Height));
             renderBitmap.Render(input_canvas);
 
             // Convert RenderTargetBitmap to Bitmap
@@ -97,17 +91,14 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 
             System.Drawing.Rectangle crop_area = new System.Drawing.Rectangle();
             var img_data = data_algs.GetImageData(bitmap);
-            // Get X coord
-            // Get Y coord
-            // Get width
-            // Get height
+            // Get x, y, width, height
 
             int decrementing_index = img_data.Item1.Count - 1;
             int incrementing_index = 0;
             while (crop_area.X == 0 || crop_area.Y == 0 || crop_area.Width == 0 || crop_area.Height == 0)
             {
 
-                // setup starting coord
+                // setup starting coord    ( X, Y )
                 if (img_data.Item1[incrementing_index] > 0 && crop_area.X == 0)
                 {
                     crop_area.X = incrementing_index;
@@ -130,40 +121,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 incrementing_index++;
                 decrementing_index--;
             }
-            //for (int incrementing_index = 0; incrementing_index < img_data.Item1.Count; incrementing_index++)
-            //{
-            //    decrementing_index -= 1;
-            //    // setup starting coord
-            //    if (img_data.Item1[incrementing_index] < 1)
-            //    {
-            //        crop_area.X = incrementing_index;
-            //    }
-            //    if (img_data.Item2[incrementing_index] < 1)
-            //    {
-            //        crop_area.Y = incrementing_index;
-            //    }
-
-            //    // setup crop Height and Width
-            //    if (img_data.Item1[decrementing_index] < 1)
-            //    {
-            //        crop_area.Width = decrementing_index - incrementing_index;
-            //    }
-            //    if (img_data.Item2[decrementing_index] < 1)
-            //    {
-            //        crop_area.Height = decrementing_index - incrementing_index;
-            //    }
-
-
-            //    // has area to be cropped been found?
-            //    if (crop_area.X > 0
-            //        && crop_area.Y > 0
-            //        && crop_area.Width > 0
-            //        && crop_area.Height > 0)
-            //    {
-            //        break;
-            //    }
-            //}
-
+            
             return bitmap.Clone(crop_area, bitmap.PixelFormat);
         }
     }

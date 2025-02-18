@@ -24,16 +24,23 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
         public SettingsView()
         {
             InitializeComponent();
-            scroll_speed_slider.Value = Settings_Control.scrolling_speed;
-            lbl_display_scroll_speed.Content = Math.Floor(Settings_Control.scrolling_speed);
+
         }
 
-        private void scroll_speed_slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void Can_Save_Images_Checked(object sender, RoutedEventArgs e)
         {
-            if (lbl_display_scroll_speed == null) { return; }
 
-            lbl_display_scroll_speed.Content = Math.Floor(e.NewValue);
-            Settings_Control.scrolling_speed = e.NewValue;
+            txt_saved_images_path.IsEnabled = ((CheckBox)sender).IsChecked == true;
+        }
+
+        private void Btn_OCR_Click(object sender, RoutedEventArgs e)
+        {
+            btn_upload_ocr.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#5F001F");
+        }
+
+        private void Btn_OCR_MouseMove(object sender, MouseEventArgs e)
+        {
+            btn_upload_ocr.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#291829");
         }
     }
 }

@@ -10,7 +10,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/MenuBtnTheme.xaml"/> 
                 <ResourceDictionary Source="Themes/CanvasTrainingBtnTheme.xaml"/>
-                <ResourceDictionary Source="Themes/ScrollBarTheme.xaml"/>
+                <ResourceDictionary Source="Themes/CanvasFunctionalBtnTheme.xaml"/>
+                <ResourceDictionary Source="Themes/SettingsBtnsTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <DataTemplate DataType="{x:Type viewModel:TrainAlgViewModel}">

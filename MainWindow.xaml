@@ -12,7 +12,8 @@
         Background="Transparent"
         AllowsTransparency="True"
         AllowDrop="True"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" 
+        MouseDown="Window_MouseDown">
 
     <Window.DataContext>
         <viewModel:MainViewModel/>
@@ -67,9 +68,9 @@
 
             </StackPanel>
 
-            <ContentControl Grid.Column="1"
-                            Grid.RowSpan="2"
-                            Content="{Binding CurrentView}"/>
+            <ContentControl Content="{Binding CurrentView}"
+                            Grid.Column="1"
+                            Grid.RowSpan="2"/>
 
         </Grid>
     </Border>
