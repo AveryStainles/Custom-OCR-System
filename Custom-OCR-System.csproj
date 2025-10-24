@@ -230,7 +230,6 @@
   <ItemGroup>
     <Folder Include=".git\objects\info\" />
     <Folder Include=".git\refs\tags\" />
-    <Folder Include="DataSource\SavedImages\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="CustomIcons\ic_OCR.png" />

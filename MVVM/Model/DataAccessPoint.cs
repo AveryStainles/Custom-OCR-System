@@ -9,6 +9,13 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
+    public class Training_Data
+    {
+        public string Value { get; set; }
+        public int TotalImagesUsedToTrain { get; set; } = 0;
+        public List<double> RowAverages { get; set; }
+        public List<double> ColumnAverages { get; set; }
+    }
     internal class DataAccessPoint
     {
         // Setup Training Data
@@ -74,20 +81,12 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         public void UpdateTrainingDataByValue(string value, List<double> newRowAverages, List<double> newColumnAverages)
         {
             // Get target value
-            int target_data_index = -1;
-            for (int index = 0; index < _data.Count; index++)
-            {
-                if (_data[index].Value == value)
-                {
-                    target_data_index = index;
-                    break;
-                }
-            }
+            int target_data_index = _data.FindIndex(a => a.Value == value);
 
-            // if index is -1, no targets data was found. Create new data for specified value
+            // Create new training value if target was not fount.
             if (target_data_index == -1)
             {
-                // Add functionality so buttons are added to the UI
+                // Update UI with buttons
                 _data.Add(Create_Training_Data(value, newRowAverages, newColumnAverages));
                 SaveAllTrainingData();
                 return;
@@ -118,23 +117,17 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             SaveAllTrainingData();
         }
 
-        public int GetDataIndexByValue(string value)
-        {
-            for (int index = 0; index < _data.Count; index++)
-            {
-                // get value from training_data that matches button content
-                if (_data[index].Value == value) { return index; }
-            }
-            return -1;
-        }
+        public int GetDataIndexByValue(string value) => _data.FindIndex(a => a.Value == value);
 
+        // Generates string that displays information about the currently trained data
         public string CreateTrainingDataReport(string filePath = "..\\..\\DataSource\\training_data_report.txt")
         {
+
+            // Header
             string report = "General Information";
             report += "\n\n Total Values Trained for OCR:\t" + _data.Count;
 
-            // Run accuracy
-
+            // Display trained value data
             foreach (var trained_data in _data)
             {
                 report += "\n\nValue:\t\t\t\t" + ((trained_data.Value.Length == 0) ? "\"\"" : trained_data.Value);
@@ -143,17 +136,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 
             return report;
 
-        }
-
-
-        // CLR Objects
-
-        public class Training_Data
-        {
-            public string Value { get; set; }
-            public int TotalImagesUsedToTrain { get; set; } = 0;
-            public List<double> RowAverages { get; set; }
-            public List<double> ColumnAverages { get; set; }
         }
     }
 }

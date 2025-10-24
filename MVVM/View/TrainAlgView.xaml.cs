@@ -72,28 +72,25 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
                 canvas_helper.DrawCircle(mouse_pos, drawing_canvas);
             }
         }
-
-        /// <summary>
-        /// Updates training data corresponding to the content property of the clicked button.
-        /// Data is updated by reversing the average into a sum, then updated with the new data into a new total average.
-        /// </summary>
         private void Train_Data(object sender, RoutedEventArgs e)
         {
             Console.WriteLine($"AVERY DEBUG: {((Button)sender).Content} Button was Clicked!");
-
-
             (List<double>, List<double>) canvas_input_data = GetImageDataFlow();
 
             // Update training data with new value
             dao.UpdateTrainingDataByValue(((Button)sender).Content + "", canvas_input_data.Item1, canvas_input_data.Item2);
+            
+            // Generate error report
             txt_data_report.Text = dao.CreateTrainingDataReport();
+
+            // Set display label to recognized value
             lbl_recognized_value.Content = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
         }
 
 
         private void GetNextTrainingButtonsClick(object sender, RoutedEventArgs e)
         {
-            // If there is no other trained data to loop to, return
+            // Display only allows 4 options to train at a time.
             if (dao._data.Count <= 4) { return; }
 
             // get value from training_data that matches button content
