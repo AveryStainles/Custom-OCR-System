@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Documents;
 
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {

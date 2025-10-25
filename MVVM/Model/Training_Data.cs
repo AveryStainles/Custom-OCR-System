@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
