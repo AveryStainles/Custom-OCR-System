@@ -112,7 +112,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             // disable next button if last training_data value
             if (index + 1 == dao._data.Count - 1)
                 btn_next_training_data.IsEnabled = false;
-
         }
 
 
@@ -177,6 +176,8 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
         private void Btn_Undo_Click(object sender, RoutedEventArgs e)
         {
+            dao._data = new List<Training_Data>();
+            dao.SaveAllTrainingData();
         }
 
         private void NextTrainingBtn_FastScroll_Click(object sender, MouseButtonEventArgs e)
