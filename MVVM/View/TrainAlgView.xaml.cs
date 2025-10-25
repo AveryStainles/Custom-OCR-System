@@ -97,9 +97,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             // get value from training_data that matches button content
             int index = dao.GetDataIndexByValue(training_btn_4.Content + "");
 
-            // disable next button if last training_data value
-            if (index + 1 == dao._data.Count - 1)
-                btn_next_training_data.IsEnabled = false;
 
             // set each buttons to it's next value except for the last one
             for (int btn_index = 0; btn_index < training_data_buttons.Count; btn_index++)
@@ -108,11 +105,14 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
             // sets the 4th training button to it's next
             if (index + 1 < dao._data.Count)
-            {
                 training_btn_4.Content = dao._data[index + 1].Value;
-            }
 
             btn_previous_training_data.IsEnabled = true;
+
+            // disable next button if last training_data value
+            if (index + 1 == dao._data.Count - 1)
+                btn_next_training_data.IsEnabled = false;
+
         }
 
 
@@ -124,7 +124,10 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             for (int training_button_index = 0; training_button_index < training_data_buttons.Count; training_button_index++)
                 training_data_buttons[training_button_index].Content = dao._data[index + training_button_index].Value;
 
-            btn_next_training_data.IsEnabled = index > 0;
+            btn_next_training_data.IsEnabled = true;
+
+            if (index <= 0)
+                btn_previous_training_data.IsEnabled = false;
         }
 
 
