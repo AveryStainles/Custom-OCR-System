@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using static Custom_Optical_Character_Recognition_System.MVVM.Model.DataAccessPoint;
 
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
     internal class DataAlgorithm
     {
 
-        /// <summary>
-        /// Returns tuple of list rowsAverage and columnsAverage of picture at specified path.
-        /// SOON TO BE USELESS
-        /// </summary>
-        /// <returns></returns>
+        // Returns tuple of list rowsAverage and columnsAverage of picture at specified path.
         public (List<double>, List<double>) GetImageData(Bitmap bitmap)
         {
             List<double> columnsAverage = new List<double>();
@@ -41,28 +32,29 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             return (rowsAverage, columnsAverage);
         }
 
-        //----
-        public string RecognizeValueFromData(List<double> row_input_data, List<double> column_input_data)
+        public string RecognizeValueFromData(List<double> rowInputData, List<double> columnInputData)
         {
             // Get training data
             DataAccessPoint DAO = new DataAccessPoint();
-            List<Training_Data> all_training_data = DAO._data;
+            List<Training_Data> allTrainingData = DAO._data;
 
-            // Used to point to current likliest value
-            double lowest_difference = row_input_data.Count();
+            // The lower the number, the liklier the value is the target
+            double lowestDifference = rowInputData.Count();
+            string targetValue = "";
 
-            // Used 
-            string recognized_value = "";
-            foreach (Training_Data training_data in all_training_data)
+            foreach (Training_Data training_data in allTrainingData)
             {
-                double difference_rate = (CompareInputDataToTrainingData(training_data.RowAverages, row_input_data) + CompareInputDataToTrainingData(training_data.ColumnAverages, column_input_data)) / 2;
-                if (difference_rate < lowest_difference)
+                var compareRowData = CompareInputDataToTrainingData(training_data.RowAverages.ToList(), rowInputData);
+                var compareColumnData = CompareInputDataToTrainingData(training_data.ColumnAverages.ToList(), columnInputData);
+                double differenceRate = (compareRowData + compareColumnData) / 2;
+
+                if (differenceRate < lowestDifference)
                 {
-                    lowest_difference = difference_rate;
-                    recognized_value = training_data.Value;
+                    lowestDifference = differenceRate;
+                    targetValue = training_data.Value;
                 }
             }
-            return recognized_value;
+            return targetValue;
         }
 
 

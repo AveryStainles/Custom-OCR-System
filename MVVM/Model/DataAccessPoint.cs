@@ -2,38 +2,35 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Text;
-//using System.Text.Json;
-using System.Windows.Forms;
-using System.Windows.Markup;
+using System.Linq;
+using System.Windows.Documents;
+
 namespace Custom_Optical_Character_Recognition_System.MVVM.Model
 {
-    public class Training_Data
-    {
-        public string Value { get; set; }
-        public int TotalImagesUsedToTrain { get; set; } = 0;
-        public List<double> RowAverages { get; set; }
-        public List<double> ColumnAverages { get; set; }
-    }
-    internal class DataAccessPoint
+    public class DataAccessPoint
     {
         // Setup Training Data
-        private const string TRAINING_DATA_PATH = "..\\..\\DataSource\\training_data.ser";
+        private const string DIRECTORY_PATH = "..\\..\\DataSource\\";
+        private const string FILE_NAME = "training_data.ser";
+        private const string TRAINING_DATA_PATH = DIRECTORY_PATH + FILE_NAME;
         public List<Training_Data> _data { get; set; } = new List<Training_Data>();
-
 
         public DataAccessPoint()
         {
-            try
-            {
-                _data = JsonConvert.DeserializeObject<List<Training_Data>>(File.ReadAllText(TRAINING_DATA_PATH));
-            }
-            catch (FileNotFoundException file_not_found)
-            {
-                Console.WriteLine(file_not_found);
-                _data = new List<Training_Data>();
-            }
+            if (!Directory.Exists(DIRECTORY_PATH))
+                Directory.CreateDirectory(DIRECTORY_PATH);
+
+            if (!File.Exists(TRAINING_DATA_PATH))
+                File.Create(TRAINING_DATA_PATH);
+
+            // This will crash the first time if file was just created.
+            // Just launch the app again and it'll work fine
+            var fileData = File.ReadAllText(TRAINING_DATA_PATH);
+
+            if (string.IsNullOrEmpty(fileData))
+                fileData = "[]";
+            
+            _data = JsonConvert.DeserializeObject<List<Training_Data>>(fileData) ?? new List<Training_Data>();
         }
 
 
@@ -80,10 +77,10 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         // update data
         public void UpdateTrainingDataByValue(string value, List<double> newRowAverages, List<double> newColumnAverages)
         {
-            // Get target value
-            int target_data_index = _data.FindIndex(a => a.Value == value);
+            // Get target index so we can set the element later
+            int target_data_index = GetDataIndexByValue(value);
 
-            // Create new training value if target was not fount.
+            // Create new training value if target was not found.
             if (target_data_index == -1)
             {
                 // Update UI with buttons
@@ -95,8 +92,8 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
             Training_Data target_data = _data[target_data_index];
 
             // update training data averages with new input data
-            List<double> adjustedRowAverages = target_data.RowAverages;
-            List<double> adjustedColumnAverages = target_data.ColumnAverages;
+            List<double> adjustedRowAverages = target_data.RowAverages.ToList();
+            List<double> adjustedColumnAverages = target_data.ColumnAverages.ToList();
 
             for (int data_index = 0; data_index < adjustedRowAverages.Count; data_index++)
             {
@@ -120,8 +117,12 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
         public int GetDataIndexByValue(string value) => _data.FindIndex(a => a.Value == value);
 
         // Generates string that displays information about the currently trained data
-        public string CreateTrainingDataReport(string filePath = "..\\..\\DataSource\\training_data_report.txt")
+        public string CreateTrainingDataReport(string fileName = "training_data_report.txt")
         {
+            var filePath = DIRECTORY_PATH + fileName;
+
+            if (!File.Exists(filePath)) 
+                File.Create(filePath);
 
             // Header
             string report = "General Information";
@@ -134,8 +135,9 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.Model
                 report += "\nCount of images used to train:\t" + trained_data.TotalImagesUsedToTrain;
             }
 
-            return report;
+            File.WriteAllText(filePath, report);
 
+            return report;
         }
     }
 }

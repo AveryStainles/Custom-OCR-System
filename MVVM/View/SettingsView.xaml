@@ -10,6 +10,12 @@
     <Border Background="#1F001F"
             CornerRadius="20">
         <StackPanel Margin="30">
+
+            <Label Content="This page is not implemented yet. None of the input fields work."
+                   FontSize="22"
+                   Background="#F2EBFF"
+                   Foreground="Red"/>
+            
             <Label Content="Save canvas drawings as (.png):"
                    FontSize="22"
                    Foreground="#F2EBFF"/>

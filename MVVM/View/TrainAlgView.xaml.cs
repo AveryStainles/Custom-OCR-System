@@ -1,6 +1,7 @@
 ﻿using Custom_Optical_Character_Recognition_System.MVVM.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -79,7 +80,7 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
             // Update training data with new value
             dao.UpdateTrainingDataByValue(((Button)sender).Content + "", canvas_input_data.Item1, canvas_input_data.Item2);
-            
+
             // Generate error report
             txt_data_report.Text = dao.CreateTrainingDataReport();
 
@@ -98,25 +99,18 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
             // disable next button if last training_data value
             if (index + 1 == dao._data.Count - 1)
-            {
                 btn_next_training_data.IsEnabled = false;
-            }
 
+            // set each buttons to it's next value except for the last one
             for (int btn_index = 0; btn_index < training_data_buttons.Count; btn_index++)
-            {
-                // set each buttons to it's next value except for the last one
                 if (btn_index + 1 < training_data_buttons.Count)
-                {
                     training_data_buttons[btn_index].Content = training_data_buttons[btn_index + 1].Content;
-                }
-            }
 
             // sets the 4th training button to it's next
             if (index + 1 < dao._data.Count)
             {
                 training_btn_4.Content = dao._data[index + 1].Value;
             }
-
 
             btn_previous_training_data.IsEnabled = true;
         }
@@ -128,16 +122,9 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             int index = dao.GetDataIndexByValue(training_btn_1.Content + "") - 1;
 
             for (int training_button_index = 0; training_button_index < training_data_buttons.Count; training_button_index++)
-            {
                 training_data_buttons[training_button_index].Content = dao._data[index + training_button_index].Value;
-            }
 
-            btn_next_training_data.IsEnabled = true;
-            if (index <= 0)
-            {
-                btn_previous_training_data.IsEnabled = false;
-                return;
-            }
+            btn_next_training_data.IsEnabled = index > 0;
         }
 
 
@@ -151,9 +138,6 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             // Convert Canvas to bitmap
             System.Drawing.Bitmap bitmap = canvas_funct.ConvertCanvasToBitmap(drawing_canvas, canvas_starting_pos);
 
-            // Crop content out
-            bitmap = canvas_funct.CropBitmap(bitmap);
-
             // Scale bitmap to 128x128 pixels
             bitmap = canvas_funct.ScaleBitmap(bitmap, 128, 128);
 
@@ -166,18 +150,13 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
 
 
         /// Functional Buttons 
-
+        private void Btn_Clear_Click(object sender, RoutedEventArgs e) => CanvasFunctions.ClearCanvas(drawing_canvas);
 
         private void Btn_OCR_Click(object sender, RoutedEventArgs e)
         {
             (List<double>, List<double>) canvas_input_data = GetImageDataFlow();
             lbl_recognized_value.Content = dataAlgorithm.RecognizeValueFromData(canvas_input_data.Item1, canvas_input_data.Item2);
-
         }
-
-
-        private void Btn_Clear_Click(object sender, RoutedEventArgs e) { CanvasFunctions.ClearCanvas(drawing_canvas); }
-
 
         private void Btn_New_Training_Category_Click(object sender, RoutedEventArgs e)
         {
@@ -187,33 +166,26 @@ namespace Custom_Optical_Character_Recognition_System.MVVM.View
             {
                 IsPopupOpen = true;
                 confirm_box.ShowDialog();
-                Console.WriteLine("I RAN");
             }
             dao = new DataAccessPoint();
             txt_data_report.Text = dao.CreateTrainingDataReport();
             SetupTrainingButtons();
         }
 
-
         private void Btn_Undo_Click(object sender, RoutedEventArgs e)
         {
-
         }
 
         private void NextTrainingBtn_FastScroll_Click(object sender, MouseButtonEventArgs e)
         {
             for (int loop = 0; loop <= 3 && btn_next_training_data.IsEnabled; loop++)
-            {
                 GetNextTrainingButtonsClick(sender, e);
-            }
         }
 
         private void PreviousTrainingBtn_FastScroll_Click(object sender, MouseButtonEventArgs e)
         {
             for (int loop = 0; loop <= 3 && btn_previous_training_data.IsEnabled; loop++)
-            {
                 GetPreviousTrainingButtonsClick(sender, e);
-            }
         }
     }
 }

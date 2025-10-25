@@ -99,6 +99,7 @@
     <Compile Include="MVVM\Model\CanvasFunctions.cs" />
     <Compile Include="MVVM\Model\DataAlgorithm.cs" />
     <Compile Include="MVVM\Model\Settings_Control.cs" />
+    <Compile Include="MVVM\Model\Training_Data.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
     <Compile Include="MVVM\ViewModel\SettingsViewModel.cs" />
     <Compile Include="MVVM\ViewModel\TrainAlgViewModel.cs" />
@@ -213,8 +214,6 @@
     <None Include=".git\refs\heads\master" />
     <None Include=".git\refs\remotes\origin\Basic-UI-Update" />
     <None Include=".git\refs\remotes\origin\HEAD" />
-    <None Include="DataSource\input_columns.csv" />
-    <None Include="DataSource\input_rows.csv" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

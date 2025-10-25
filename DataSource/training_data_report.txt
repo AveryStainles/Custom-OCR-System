@@ -1,0 +1,15 @@
+General Information
+
+ Total Values Trained for OCR:	4
+
+Value:				1
+Count of images used to train:	4
+
+Value:				0
+Count of images used to train:	3
+
+Value:				4
+Count of images used to train:	5
+
+Value:				8
+Count of images used to train:	1
